@@ -1,6 +1,5 @@
 package frc.robot.subsystems.drive.config;
 
-import com.revrobotics.spark.SparkMax;
 import frc.robot.Constants;
 
 public class ModuleConstants {
@@ -20,40 +19,45 @@ public class ModuleConstants {
     public PidConfig brSteerPidConfig;
 
     public ModuleConstants() {
+        // Save some space with these convenience variables
         double x = Constants.Drive.drivetrainTrackwidthMeters / 2.0;
         double y = Constants.Drive.drivetrainWheelbaseMeters / 2.0;
-     
-     
-     
-        flModuleConfig = new ModuleConfig()
+
+        flModuleConfig = getDefaultModuleConfig()
             .withDriveID(Constants.Drive.frontLeftDriveID)
             .withSteerID(Constants.Drive.frontLeftSteerID)
             .withEncoderID(Constants.Drive.frontLeftEncoderID)
             .withWheelDiameter(Constants.Drive.frontLeftDiameter)
             .withDriveInverted(!Constants.Drive.invertRight)
-            .withDriveCoast(Constants.Drive.driveCoastMode);
-            
+            .withXpos(x)
+            .withYpos(y);
 
         frModuleConfig = getDefaultModuleConfig()
             .withDriveID(Constants.Drive.frontRightDriveID)
             .withSteerID(Constants.Drive.frontRightSteerID)
             .withEncoderID(Constants.Drive.frontRightEncoderID)
             .withWheelDiameter(Constants.Drive.frontRightDiameter)
-            .withDriveInverted(Constants.Drive.invertRight);
+            .withDriveInverted(Constants.Drive.invertRight)
+            .withXpos(x)
+            .withYpos(-y);
 
         blModuleConfig =  getDefaultModuleConfig()
             .withDriveID(Constants.Drive.backLeftDriveID)
             .withSteerID(Constants.Drive.backLeftSteerID)
             .withEncoderID(Constants.Drive.backLeftEncoderID)
             .withWheelDiameter(Constants.Drive.backLeftDiameter)
-            .withDriveInverted( ! Constants.Drive.invertRight);
+            .withDriveInverted( ! Constants.Drive.invertRight)
+            .withXpos(x)
+            .withYpos(-y);
 
         brModuleConfig = getDefaultModuleConfig()
             .withDriveID(Constants.Drive.backRightDriveID)
             .withSteerID(Constants.Drive.backRightSteerID)
             .withEncoderID(Constants.Drive.backRightEncoderID)
             .withWheelDiameter(Constants.Drive.backRightDiameter)
-            .withDriveInverted( ! Constants.Drive.invertRight);
+            .withDriveInverted( ! Constants.Drive.invertRight)
+            .withXpos(-x)
+            .withYpos(-y);
 
         flDrivePidConfig = getDefaultDrivePidConfig();
         frDrivePidConfig = getDefaultDrivePidConfig();
