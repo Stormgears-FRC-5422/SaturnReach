@@ -19,7 +19,7 @@ public class DiagnosticSwerve extends DrivetrainBase {
     private final int BACK_LEFT = 3;
     private final int BACK_RIGHT = 2;
 
-    public DiagnosticSwerve() {
+    public DiagnosticSwerve(){
         // These are convenient lies - the units basically work
         double maxVelocityMetersPerSecond = m_maxMotorVoltage;
         double maxAngularVelocityRadiansPerSecond = m_maxMotorVoltage;

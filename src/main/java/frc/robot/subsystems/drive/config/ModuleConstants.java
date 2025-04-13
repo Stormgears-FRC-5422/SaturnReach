@@ -20,12 +20,19 @@ public class ModuleConstants {
     public PidConfig brSteerPidConfig;
 
     public ModuleConstants() {
+        double x = Constants.Drive.drivetrainTrackwidthMeters / 2.0;
+        double y = Constants.Drive.drivetrainWheelbaseMeters / 2.0;
+     
+     
+     
         flModuleConfig = new ModuleConfig()
             .withDriveID(Constants.Drive.frontLeftDriveID)
             .withSteerID(Constants.Drive.frontLeftSteerID)
             .withEncoderID(Constants.Drive.frontLeftEncoderID)
             .withWheelDiameter(Constants.Drive.frontLeftDiameter)
-            .withDriveInverted(!Constants.Drive.invertRight);
+            .withDriveInverted(!Constants.Drive.invertRight)
+            .withDriveCoast(Constants.Drive.driveCoastMode);
+            
 
         frModuleConfig = getDefaultModuleConfig()
             .withDriveID(Constants.Drive.frontRightDriveID)

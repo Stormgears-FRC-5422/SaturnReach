@@ -9,6 +9,8 @@ public class ModuleConfig {
     double wheelDiameter = 0;
     boolean driveCoast = true;
     boolean steerCoast = true;
+    double xpos = 0; 
+    double ypos = 0;
 
     public ModuleConfig withDriveID(int newID)
     {
@@ -58,6 +60,16 @@ public class ModuleConfig {
         return this;
     }
 
+    public ModuleConfig withXpos(double newXpos){
+        xpos = newXpos;
+        return this;
+    }
+
+    public ModuleConfig withYpos(double newYpos){
+        ypos = newYpos;
+        return this;
+    }
+
     public static ModuleConfig from(ModuleConfig value)
     {
         return new ModuleConfig() {{
@@ -66,6 +78,11 @@ public class ModuleConfig {
             encoderID = value.encoderID;
             driveInverted = value.driveInverted;
             steerInverted = value.steerInverted;
+            wheelDiameter = value.wheelDiameter;
+            driveCoast = value.driveCoast;
+            steerCoast = value.steerCoast;
+            xpos = value.xpos;
+            ypos = value.ypos;
         }};
     }
 
@@ -78,8 +95,14 @@ public class ModuleConfig {
         ss += "    encoderID: " + encoderID + "\n";
         ss += "    driveInverted: " + driveInverted + "\n";
         ss += "    steerInverted: " + steerInverted + "\n";
+        ss += "    wheelDiameter: " + wheelDiameter + "\n";
+        ss += "    driveCoast: " + driveCoast + "\n";
+        ss += "    steerCoast: " + steerCoast + "\n";
+        ss += "    xpos: " + xpos + "\n";
+        ss += "    ypos: " + ypos + "\n";
         return ss;
     }
+    
 
 
 }
