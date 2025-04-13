@@ -9,7 +9,7 @@ public class ModuleConfig {
     double wheelDiameter = 0;
     boolean driveCoast = true;
     boolean steerCoast = true;
-    double xpos = 0; 
+    double xpos = 0;
     double ypos = 0;
 
     public ModuleConfig withDriveID(int newID)
@@ -26,7 +26,7 @@ public class ModuleConfig {
 
     public ModuleConfig withEncoderID(int newID)
     {
-        steerID = newID;
+        encoderID = newID;
         return this;
     }
 
@@ -102,7 +102,7 @@ public class ModuleConfig {
         ss += "    ypos: " + ypos + "\n";
         return ss;
     }
-    
+
 
 
 }

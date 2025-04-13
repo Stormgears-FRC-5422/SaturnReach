@@ -26,8 +26,7 @@ public class RobotContainer {
     // **********
     // Commands
     // **********
-    private Shoot shoot;
-    private Outtake outtake;
+    // (no pre-created commands)
 
     // **********
     // Fields
@@ -71,17 +70,14 @@ public class RobotContainer {
     private void configureBindings() {
         console("[Init] configureBindings");
 
-        new Trigger(() -> joystick.shoot()).onTrue(shoot);
-        new Trigger(() -> joystick.outtake()).onTrue(outtake);
+        if (Toggles.useShooter) {
+            new Trigger(() -> joystick.shoot()).whileTrue(new Shoot(shooter));
+            new Trigger(() -> joystick.outtake()).whileTrue(new Outtake(shooter));
+        }
 
         if (Toggles.useDrive) {
             JoyStickDrive driveWithJoystick = new JoyStickDrive(drivetrain, joystick);
             drivetrain.setDefaultCommand(driveWithJoystick);
-        }
-
-        if (Toggles.useShooter) {
-            shoot = new Shoot(shooter);
-            outtake = new Outtake(shooter);
         }
 
         console("[DONE] configureBindings");

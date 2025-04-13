@@ -3,7 +3,7 @@ package frc.robot.subsystems.drive;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.revrobotics.spark.SparkMax;
 import frc.robot.Constants.Drive;
-import frc.robot.subsystems.drive.config.ModuleConstants;
+import frc.robot.subsystems.drive.config.SaturnXModuleConstants;
 import frc.robot.subsystems.drive.config.SwerveModule;
 import org.littletonrobotics.junction.Logger;
 
@@ -26,7 +26,7 @@ public class DiagnosticSwerve extends DrivetrainBase {
         setMaxVelocities(maxVelocityMetersPerSecond * Drive.driveSpeedScale,
             maxAngularVelocityRadiansPerSecond * Drive.driveSpeedScale);
 
-        ModuleConstants c = new ModuleConstants();
+        SaturnXModuleConstants c = new SaturnXModuleConstants();
         swerveModules = new SwerveModule[4];
         swerveModules[FRONT_LEFT] = new SwerveModule(c.flModuleConfig, c.flDrivePidConfig);
         swerveModules[FRONT_RIGHT] =new SwerveModule(c.frModuleConfig, c.frDrivePidConfig);

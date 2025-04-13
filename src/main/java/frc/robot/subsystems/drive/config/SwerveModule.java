@@ -39,7 +39,7 @@ public class SwerveModule {
             SparkBase.ResetMode.kResetSafeParameters,
             SparkBase.PersistMode.kPersistParameters);
 
-        steerMotor.configure(driveConfig,
+        steerMotor.configure(steerConfig,
             SparkBase.ResetMode.kResetSafeParameters,
             SparkBase.PersistMode.kPersistParameters);
     }
