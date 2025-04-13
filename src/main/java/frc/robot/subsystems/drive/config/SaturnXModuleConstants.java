@@ -28,9 +28,9 @@ public class SaturnXModuleConstants {
             .withSteerID(Constants.Drive.frontLeftSteerID)
             .withEncoderID(Constants.Drive.frontLeftEncoderID)
             .withWheelDiameter(Constants.Drive.frontLeftDiameter)
-            .withDriveInverted( ! Constants.Drive.invertRight)
-            .withXpos(x)
-            .withYpos(y);
+            .withDriveInverted(!Constants.Drive.invertRight)
+            .withDriveCoast(Constants.Drive.driveCoastMode);
+            
 
         frModuleConfig = getDefaultModuleConfig()
             .withDriveID(Constants.Drive.frontRightDriveID)
@@ -55,9 +55,7 @@ public class SaturnXModuleConstants {
             .withSteerID(Constants.Drive.backRightSteerID)
             .withEncoderID(Constants.Drive.backRightEncoderID)
             .withWheelDiameter(Constants.Drive.backRightDiameter)
-            .withDriveInverted(Constants.Drive.invertRight)
-            .withXpos(-x)
-            .withYpos(-y);
+            .withDriveInverted( ! Constants.Drive.invertRight);
 
         flDrivePidConfig = getDefaultDrivePidConfig();
         frDrivePidConfig = getDefaultDrivePidConfig();
