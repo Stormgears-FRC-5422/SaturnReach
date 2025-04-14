@@ -13,8 +13,13 @@ public class SwerveModule {
     public final SparkMax driveMotor;
     public final SparkMax steerMotor;
     public final CANcoder encoder;
+    public final ModuleConfig moduleConfig;
+    public final PidConfig pidConfig;
 
     public SwerveModule(ModuleConfig moduleConfig, PidConfig pidConfig) {
+        this.moduleConfig = moduleConfig;
+        this.pidConfig = pidConfig;
+
         driveConfig = new SparkMaxConfig();
         steerConfig = new SparkMaxConfig();
 

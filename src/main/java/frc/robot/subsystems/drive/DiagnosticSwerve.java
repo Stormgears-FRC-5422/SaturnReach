@@ -5,51 +5,35 @@ import com.revrobotics.spark.SparkMax;
 import frc.robot.Constants.Drive;
 import frc.robot.subsystems.drive.config.SaturnXModuleConstants;
 import frc.robot.subsystems.drive.config.SwerveModule;
+import frc.robot.subsystems.drive.config.SwerveModuleGroup;
 import org.littletonrobotics.junction.Logger;
 
 public class DiagnosticSwerve extends DrivetrainBase {
-    public static final double m_maxMotorVoltage = Drive.maxMotorVoltage;
-    public SwerveModule[] swerveModules;
-    public SparkMax[] driveArray;
-    public SparkMax[] steerArray;
-    public CANcoder[] encoderArray;
+    final double m_maxMotorVoltage = Drive.maxMotorVoltage;
 
-    private final int FRONT_LEFT = 0;
-    private final int FRONT_RIGHT = 1;
-    private final int BACK_LEFT = 3;
-    private final int BACK_RIGHT = 2;
+    final SwerveModuleGroup moduleGroup;
+    final SwerveModule[] modules;
+    final SparkMax[] driveMotors;
+    final SparkMax[] steerMotors;
+    final CANcoder[] encoders;
 
-    public DiagnosticSwerve(){
+    final int FRONT_LEFT = SwerveModuleGroup.FRONT_LEFT;
+    final int FRONT_RIGHT = SwerveModuleGroup.FRONT_RIGHT;
+    final int BACK_RIGHT = SwerveModuleGroup.BACK_RIGHT;
+    final int BACK_LEFT = SwerveModuleGroup.BACK_LEFT;
+
+    public DiagnosticSwerve(SaturnXModuleConstants moduleConstants){
+        super();
+
         // These are convenient lies - the units basically work
-        double maxVelocityMetersPerSecond = m_maxMotorVoltage;
-        double maxAngularVelocityRadiansPerSecond = m_maxMotorVoltage;
-        setMaxVelocities(maxVelocityMetersPerSecond * Drive.driveSpeedScale,
-            maxAngularVelocityRadiansPerSecond * Drive.driveSpeedScale);
+        setMaxVelocities(m_maxMotorVoltage * Drive.driveSpeedScale,
+            m_maxMotorVoltage * Drive.driveSpeedScale);
 
-        SaturnXModuleConstants c = new SaturnXModuleConstants();
-        swerveModules = new SwerveModule[4];
-        swerveModules[FRONT_LEFT] = new SwerveModule(c.flModuleConfig, c.flDrivePidConfig);
-        swerveModules[FRONT_RIGHT] =new SwerveModule(c.frModuleConfig, c.frDrivePidConfig);
-        swerveModules[BACK_RIGHT] =new SwerveModule(c.brModuleConfig, c.brDrivePidConfig);
-        swerveModules[BACK_LEFT] =new SwerveModule(c.blModuleConfig, c.blDrivePidConfig);
-
-        driveArray = new SparkMax[4];
-        driveArray[FRONT_RIGHT] = swerveModules[FRONT_RIGHT].driveMotor;
-        driveArray[FRONT_LEFT] = swerveModules[FRONT_LEFT].driveMotor;
-        driveArray[BACK_RIGHT] = swerveModules[BACK_RIGHT].driveMotor;
-        driveArray[BACK_LEFT] = swerveModules[BACK_LEFT].driveMotor;
-
-        steerArray = new SparkMax[4];
-        steerArray[FRONT_RIGHT] = swerveModules[FRONT_RIGHT].steerMotor;
-        steerArray[FRONT_LEFT] = swerveModules[FRONT_LEFT].steerMotor;
-        steerArray[BACK_RIGHT] = swerveModules[BACK_RIGHT].steerMotor;
-        steerArray[BACK_LEFT] = swerveModules[BACK_LEFT].steerMotor;
-
-        encoderArray = new CANcoder[4];
-        encoderArray[FRONT_RIGHT] = swerveModules[FRONT_RIGHT].encoder;
-        encoderArray[FRONT_LEFT] = swerveModules[FRONT_LEFT].encoder;
-        encoderArray[BACK_RIGHT] = swerveModules[BACK_RIGHT].encoder;
-        encoderArray[BACK_LEFT] = swerveModules[BACK_LEFT].encoder;
+        moduleGroup = new SwerveModuleGroup(moduleConstants);
+        driveMotors = moduleGroup.getDriveMotors();
+        steerMotors = moduleGroup.getSteerMotors();
+        encoders = moduleGroup.getEncoders();
+        modules = moduleGroup.getModules();;
     }
 
     @Override
@@ -57,32 +41,32 @@ public class DiagnosticSwerve extends DrivetrainBase {
         double driveSpeed = m_chassisSpeeds.vxMetersPerSecond;
         double steerSpeed = m_chassisSpeeds.omegaRadiansPerSecond;
 
-        for (SparkMax m : driveArray) {
+        for (SparkMax m : driveMotors) {
             m.set(driveSpeed);
         }
 
-        for (SparkMax m : steerArray) {
+        for (SparkMax m : steerMotors) {
             m.set(steerSpeed);
         }
 
-        Logger.recordOutput("fl steer", steerArray[FRONT_LEFT].getEncoder().getPosition());
-        Logger.recordOutput("fr steer", steerArray[FRONT_RIGHT].getEncoder().getPosition());
-        Logger.recordOutput("bl steer", steerArray[BACK_LEFT].getEncoder().getPosition());
-        Logger.recordOutput("br steer", steerArray[BACK_RIGHT].getEncoder().getPosition());
+        Logger.recordOutput("fl steer", steerMotors[FRONT_LEFT].getEncoder().getPosition());
+        Logger.recordOutput("fr steer", steerMotors[FRONT_RIGHT].getEncoder().getPosition());
+        Logger.recordOutput("bl steer", steerMotors[BACK_LEFT].getEncoder().getPosition());
+        Logger.recordOutput("br steer", steerMotors[BACK_RIGHT].getEncoder().getPosition());
 
-        Logger.recordOutput("fl encoder", steerArray[FRONT_LEFT].getEncoder().getPosition());
-        Logger.recordOutput("fr encoder", steerArray[FRONT_RIGHT].getEncoder().getPosition());
-        Logger.recordOutput("bl encoder", steerArray[BACK_LEFT].getEncoder().getPosition());
-        Logger.recordOutput("br encoder", steerArray[BACK_RIGHT].getEncoder().getPosition());
+        Logger.recordOutput("fl encoder", encoders[FRONT_LEFT].getPosition().getValue());
+        Logger.recordOutput("fr encoder", encoders[FRONT_RIGHT].getPosition().getValue());
+        Logger.recordOutput("bl encoder", encoders[BACK_LEFT].getPosition().getValue());
+        Logger.recordOutput("br encoder", encoders[BACK_RIGHT].getPosition().getValue());
 
-        Logger.recordOutput("fl drive pos", steerArray[FRONT_LEFT].getEncoder().getPosition());
-        Logger.recordOutput("fr drive pos", steerArray[FRONT_RIGHT].getEncoder().getPosition());
-        Logger.recordOutput("bl drive pos", steerArray[BACK_LEFT].getEncoder().getPosition());
-        Logger.recordOutput("br drive pos", steerArray[BACK_RIGHT].getEncoder().getPosition());
+        Logger.recordOutput("fl drive pos", driveMotors[FRONT_LEFT].getEncoder().getPosition());
+        Logger.recordOutput("fr drive pos", driveMotors[FRONT_RIGHT].getEncoder().getPosition());
+        Logger.recordOutput("bl drive pos", driveMotors[BACK_LEFT].getEncoder().getPosition());
+        Logger.recordOutput("br drive pos", driveMotors[BACK_RIGHT].getEncoder().getPosition());
 
-        Logger.recordOutput("fl drive vel", steerArray[FRONT_LEFT].getEncoder().getVelocity());
-        Logger.recordOutput("fr drive vel", steerArray[FRONT_RIGHT].getEncoder().getVelocity());
-        Logger.recordOutput("bl drive vel", steerArray[BACK_LEFT].getEncoder().getVelocity());
-        Logger.recordOutput("br drive vel", steerArray[BACK_RIGHT].getEncoder().getVelocity());
+        Logger.recordOutput("fl drive vel", driveMotors[FRONT_LEFT].getEncoder().getVelocity());
+        Logger.recordOutput("fr drive vel", driveMotors[FRONT_RIGHT].getEncoder().getVelocity());
+        Logger.recordOutput("bl drive vel", driveMotors[BACK_LEFT].getEncoder().getVelocity());
+        Logger.recordOutput("br drive vel", driveMotors[BACK_RIGHT].getEncoder().getVelocity());
     }
 }

@@ -1,5 +1,6 @@
 package frc.robot.subsystems.drive.config;
 
+import edu.wpi.first.math.geometry.Translation2d;
 import frc.robot.Constants;
 
 public class SaturnXModuleConstants {
@@ -29,8 +30,7 @@ public class SaturnXModuleConstants {
             .withEncoderID(Constants.Drive.frontLeftEncoderID)
             .withWheelDiameter(Constants.Drive.frontLeftDiameter)
             .withDriveInverted(!Constants.Drive.invertRight)
-            .withDriveCoast(Constants.Drive.driveCoastMode);
-            
+            .withOffset(new Translation2d(x,y));
 
         frModuleConfig = getDefaultModuleConfig()
             .withDriveID(Constants.Drive.frontRightDriveID)
@@ -38,8 +38,7 @@ public class SaturnXModuleConstants {
             .withEncoderID(Constants.Drive.frontRightEncoderID)
             .withWheelDiameter(Constants.Drive.frontRightDiameter)
             .withDriveInverted(Constants.Drive.invertRight)
-            .withXpos(x)
-            .withYpos(-y);
+            .withOffset(new Translation2d(x,-y));
 
         blModuleConfig =  getDefaultModuleConfig()
             .withDriveID(Constants.Drive.backLeftDriveID)
@@ -47,15 +46,15 @@ public class SaturnXModuleConstants {
             .withEncoderID(Constants.Drive.backLeftEncoderID)
             .withWheelDiameter(Constants.Drive.backLeftDiameter)
             .withDriveInverted( ! Constants.Drive.invertRight)
-            .withXpos(x)
-            .withYpos(-y);
+            .withOffset(new Translation2d(-x,y));
 
         brModuleConfig = getDefaultModuleConfig()
             .withDriveID(Constants.Drive.backRightDriveID)
             .withSteerID(Constants.Drive.backRightSteerID)
             .withEncoderID(Constants.Drive.backRightEncoderID)
             .withWheelDiameter(Constants.Drive.backRightDiameter)
-            .withDriveInverted( ! Constants.Drive.invertRight);
+            .withDriveInverted( ! Constants.Drive.invertRight)
+            .withOffset(new Translation2d(-x,-y));
 
         flDrivePidConfig = getDefaultDrivePidConfig();
         frDrivePidConfig = getDefaultDrivePidConfig();

@@ -1,16 +1,17 @@
 package frc.robot.subsystems.drive.config;
 
+import edu.wpi.first.math.geometry.Translation2d;
+
 public class ModuleConfig {
-    int driveID = 0;
-    int steerID = 0;
-    int encoderID = 0;
-    boolean driveInverted = false;
-    boolean steerInverted = false;
-    double wheelDiameter = 0;
-    boolean driveCoast = true;
-    boolean steerCoast = true;
-    double xpos = 0;
-    double ypos = 0;
+    public int driveID = 0;
+    public int steerID = 0;
+    public int encoderID = 0;
+    public boolean driveInverted = false;
+    public boolean steerInverted = false;
+    public double wheelDiameter = 0;
+    public boolean driveCoast = true;
+    public boolean steerCoast = true;
+    public Translation2d offset = new Translation2d();
 
     public ModuleConfig withDriveID(int newID)
     {
@@ -60,13 +61,8 @@ public class ModuleConfig {
         return this;
     }
 
-    public ModuleConfig withXpos(double newXpos){
-        xpos = newXpos;
-        return this;
-    }
-
-    public ModuleConfig withYpos(double newYpos){
-        ypos = newYpos;
+    public ModuleConfig withOffset(Translation2d newOffset){
+        offset = new Translation2d(newOffset.getX(), newOffset.getY());
         return this;
     }
 
@@ -81,8 +77,7 @@ public class ModuleConfig {
             wheelDiameter = value.wheelDiameter;
             driveCoast = value.driveCoast;
             steerCoast = value.steerCoast;
-            xpos = value.xpos;
-            ypos = value.ypos;
+            offset = new Translation2d(value.offset.getX(), value.offset.getY());
         }};
     }
 
@@ -98,8 +93,7 @@ public class ModuleConfig {
         ss += "    wheelDiameter: " + wheelDiameter + "\n";
         ss += "    driveCoast: " + driveCoast + "\n";
         ss += "    steerCoast: " + steerCoast + "\n";
-        ss += "    xpos: " + xpos + "\n";
-        ss += "    ypos: " + ypos + "\n";
+        ss += "    offset: " + offset + "\n";
         return ss;
     }
 
