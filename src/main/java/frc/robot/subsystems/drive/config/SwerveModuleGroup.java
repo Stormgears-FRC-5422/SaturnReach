@@ -18,9 +18,9 @@ public class SwerveModuleGroup {
     public SwerveModuleGroup(SaturnXModuleConstants c) {
         swerveModules = new SwerveModule[NUM_MODULES];
         swerveModules[FRONT_LEFT] = new SwerveModule(c.flModuleConfig, c.flDrivePidConfig);
-        swerveModules[FRONT_RIGHT] =new SwerveModule(c.frModuleConfig, c.frDrivePidConfig);
-        swerveModules[BACK_RIGHT] =new SwerveModule(c.brModuleConfig, c.brDrivePidConfig);
-        swerveModules[BACK_LEFT] =new SwerveModule(c.blModuleConfig, c.blDrivePidConfig);
+        swerveModules[FRONT_RIGHT] = new SwerveModule(c.frModuleConfig, c.frDrivePidConfig);
+        swerveModules[BACK_RIGHT] = new SwerveModule(c.brModuleConfig, c.brDrivePidConfig);
+        swerveModules[BACK_LEFT] = new SwerveModule(c.blModuleConfig, c.blDrivePidConfig);
 
         driveArray = new SparkMax[NUM_MODULES];
         driveArray[FRONT_RIGHT] = swerveModules[FRONT_RIGHT].driveMotor;
@@ -41,8 +41,19 @@ public class SwerveModuleGroup {
         encoderArray[BACK_LEFT] = swerveModules[BACK_LEFT].encoder;
     }
 
-    public SparkMax[] getDriveMotors() { return driveArray; }
-    public SparkMax[] getSteerMotors() { return steerArray; }
-    public CANcoder[] getEncoders() { return encoderArray; }
-    public SwerveModule[] getModules() { return swerveModules; }
+    public SparkMax[] getDriveMotors() {
+        return driveArray;
+    }
+
+    public SparkMax[] getSteerMotors() {
+        return steerArray;
+    }
+
+    public CANcoder[] getEncoders() {
+        return encoderArray;
+    }
+
+    public SwerveModule[] getModules() {
+        return swerveModules;
+    }
 }

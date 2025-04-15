@@ -5,8 +5,8 @@ import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.util.Color;
 import frc.robot.Constants;
 import frc.robot.RobotState;
-import frc.utils.StormSubsystem;
 import frc.robot.subsystems.BatteryMonitor.BatteryState;
+import frc.utils.StormSubsystem;
 
 import static edu.wpi.first.units.Units.*;
 
@@ -81,5 +81,4 @@ public class Lights extends StormSubsystem {
         LEDPattern pattern = LEDPattern.solid(color);
         patternApplyTo(pattern, addressableLEDBuffer);
     }
-
 }

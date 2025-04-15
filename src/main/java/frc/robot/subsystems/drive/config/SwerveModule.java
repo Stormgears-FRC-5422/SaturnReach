@@ -1,20 +1,20 @@
 package frc.robot.subsystems.drive.config;
 
+import com.ctre.phoenix6.hardware.CANcoder;
 import com.revrobotics.spark.SparkBase;
 import com.revrobotics.spark.SparkLowLevel;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkMaxConfig;
-import com.ctre.phoenix6.hardware.CANcoder;
 import frc.robot.Constants;
 
 public class SwerveModule {
-    private final SparkMaxConfig driveConfig;
-    private final SparkMaxConfig steerConfig;
     public final SparkMax driveMotor;
     public final SparkMax steerMotor;
     public final CANcoder encoder;
     public final ModuleConfig moduleConfig;
     public final PidConfig pidConfig;
+    private final SparkMaxConfig driveConfig;
+    private final SparkMaxConfig steerConfig;
 
     public SwerveModule(ModuleConfig moduleConfig, PidConfig pidConfig) {
         this.moduleConfig = moduleConfig;

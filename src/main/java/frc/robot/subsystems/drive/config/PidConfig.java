@@ -133,6 +133,17 @@ public class PidConfig {
      */
     public double kA = 0;
 
+    public static PidConfig from(PidConfig value) {
+        return new PidConfig() {{
+            kP = value.kP;
+            kI = value.kI;
+            kD = value.kD;
+            kS = value.kS;
+            kV = value.kV;
+            kA = value.kA;
+        }};
+    }
+
     /**
      * Modifies this configuration's kP parameter and returns itself for
      * method-chaining and easier to use config API.
@@ -156,8 +167,7 @@ public class PidConfig {
      * @param newKP Parameter to modify
      * @return Itself
      */
-    public PidConfig withKP(double newKP)
-    {
+    public PidConfig withKP(double newKP) {
         kP = newKP;
         return this;
     }
@@ -187,8 +197,7 @@ public class PidConfig {
      * @param newKI Parameter to modify
      * @return Itself
      */
-    public PidConfig withKI(double newKI)
-    {
+    public PidConfig withKI(double newKI) {
         kI = newKI;
         return this;
     }
@@ -219,8 +228,7 @@ public class PidConfig {
      * @param newKD Parameter to modify
      * @return Itself
      */
-    public PidConfig withKD(double newKD)
-    {
+    public PidConfig withKD(double newKD) {
         kD = newKD;
         return this;
     }
@@ -254,8 +262,7 @@ public class PidConfig {
      * @param newKS Parameter to modify
      * @return Itself
      */
-    public PidConfig withKS(double newKS)
-    {
+    public PidConfig withKS(double newKS) {
         kS = newKS;
         return this;
     }
@@ -283,8 +290,7 @@ public class PidConfig {
      * @param newKV Parameter to modify
      * @return Itself
      */
-    public PidConfig withKV(double newKV)
-    {
+    public PidConfig withKV(double newKV) {
         kV = newKV;
         return this;
     }
@@ -312,27 +318,13 @@ public class PidConfig {
      * @param newKA Parameter to modify
      * @return Itself
      */
-    public PidConfig withKA(double newKA)
-    {
+    public PidConfig withKA(double newKA) {
         kA = newKA;
         return this;
     }
 
-    public static PidConfig from(PidConfig value)
-    {
-        return new PidConfig() {{
-            kP = value.kP;
-            kI = value.kI;
-            kD = value.kD;
-            kS = value.kS;
-            kV = value.kV;
-            kA = value.kA;
-        }};
-    }
-
     @Override
-    public String toString()
-    {
+    public String toString() {
         String ss = "PID Config:\n";
         ss += "    kP: " + kP + "\n";
         ss += "    kI: " + kI + "\n";
@@ -342,6 +334,5 @@ public class PidConfig {
         ss += "    kA: " + kA + "\n";
         return ss;
     }
-
 }
 

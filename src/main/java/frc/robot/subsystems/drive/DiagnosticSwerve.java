@@ -22,7 +22,7 @@ public class DiagnosticSwerve extends DrivetrainBase {
     final int BACK_RIGHT = SwerveModuleGroup.BACK_RIGHT;
     final int BACK_LEFT = SwerveModuleGroup.BACK_LEFT;
 
-    public DiagnosticSwerve(SaturnXModuleConstants moduleConstants){
+    public DiagnosticSwerve(SaturnXModuleConstants moduleConstants) {
         super();
 
         // These are convenient lies - the units basically work
@@ -33,7 +33,7 @@ public class DiagnosticSwerve extends DrivetrainBase {
         driveMotors = moduleGroup.getDriveMotors();
         steerMotors = moduleGroup.getSteerMotors();
         encoders = moduleGroup.getEncoders();
-        modules = moduleGroup.getModules();;
+        modules = moduleGroup.getModules();
     }
 
     @Override

@@ -25,7 +25,7 @@ public class CrescendoJoystick {
         return controller.getRawButton(1);
     }
 
-    public boolean outtake()  {
+    public boolean outtake() {
         return controller.getRawButton(2);
     }
 

@@ -3,15 +3,15 @@ package frc.robot.commands.shoot;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.Constants;
 import frc.robot.RobotState;
-import frc.utils.StormCommand;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Shooter.ShooterState;
+import frc.utils.StormCommand;
 
 public class Shoot extends StormCommand {
     private final Shooter s;
-    private Timer timer;
     RobotState robotState;
     ShooterState shooterState;
+    private Timer timer;
 
     public Shoot(Shooter s) {
         this.s = s;

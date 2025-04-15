@@ -62,9 +62,9 @@ public class JoyStickDrive extends StormCommand {
         double omega = omegaSupplier.getAsDouble();
 
         if (ButtonBoard.squarePath) {
-            x = xScaleLimiter.calculate(x*Math.abs(x));
-            y = yScaleLimiter.calculate(y*Math.abs(y));
-            omega = omegaScaleLimiter.calculate(omega*Math.abs(omega));
+            x = xScaleLimiter.calculate(x * Math.abs(x));
+            y = yScaleLimiter.calculate(y * Math.abs(y));
+            omega = omegaScaleLimiter.calculate(omega * Math.abs(omega));
         } else {
             x = xScaleLimiter.calculate(x);
             y = yScaleLimiter.calculate(y);
@@ -88,5 +88,4 @@ public class JoyStickDrive extends StormCommand {
     public void end(boolean interrupted) {
         super.end(interrupted);
     }
-
 }

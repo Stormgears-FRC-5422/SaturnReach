@@ -1,6 +1,5 @@
 package frc.robot.commands.shoot;
 
-import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Shooter;
 import frc.utils.StormCommand;
 

@@ -7,11 +7,11 @@ import frc.robot.subsystems.Shooter.ShooterState;
 public class RobotState {
     private static RobotState instance;
     private final StateSimMode stateSimMode;
+    boolean upperSensorTriggered;
+    boolean shooting;
     private BatteryState batteryState;
     private ShooterState shooterState;
     private StatePeriod statePeriod;
-    boolean upperSensorTriggered;
-    boolean shooting;
 
     private RobotState() {
         if (RobotBase.isReal()) {
@@ -62,17 +62,18 @@ public class RobotState {
         shooterState = s;
     }
 
-    public void setBatteryState(BatteryState batteryState) {
-        this.batteryState = batteryState;
-    }
-
     public BatteryState getBatteryState() {
         return this.batteryState;
+    }
+
+    public void setBatteryState(BatteryState batteryState) {
+        this.batteryState = batteryState;
     }
 
     public boolean getIsShooting() {
         return shooting;
     }
+
     public void setIsShooting(boolean shooting) {
         this.shooting = shooting;
     }

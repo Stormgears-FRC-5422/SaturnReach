@@ -5,7 +5,6 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.PowerDistribution;
-import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.RobotState.StatePeriod;
 import org.littletonrobotics.junction.LogFileUtil;
@@ -96,8 +95,6 @@ public class Robot extends LoggedRobot {
             }
         }
     }
-
-
 
     private void logBuildDetails() {
         Logger.recordMetadata("ProjectName", Constants.robotName); // Set a metadata value

@@ -5,29 +5,19 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.Toggles;
 import frc.robot.commands.JoyStickDrive;
-import frc.robot.commands.shoot.*;
+import frc.robot.commands.shoot.Outtake;
+import frc.robot.commands.shoot.Shoot;
 import frc.robot.joysticks.CrescendoJoystick;
 import frc.robot.subsystems.BatteryMonitor;
-import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Lights;
+import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.drive.DrivetrainBase;
 import frc.robot.subsystems.drive.DrivetrainFactory;
 import frc.robot.subsystems.drive.IllegalDriveTypeException;
-import frc.utils.joysticks.StormLogitechController;
-import frc.robot.Constants.Toggles;
 
 public class RobotContainer {
-    private BatteryMonitor batteryMonitor;
-    private DrivetrainBase drivetrain;
-    private Lights lights;
-    private Shooter shooter;
-
-    // **********
-    // Commands
-    // **********
-    // (no pre-created commands)
-
     // **********
     // Fields
     // **********
@@ -37,6 +27,15 @@ public class RobotContainer {
     // Control
     // **********
     CrescendoJoystick joystick;
+    private BatteryMonitor batteryMonitor;
+    private DrivetrainBase drivetrain;
+
+    // **********
+    // Commands
+    // **********
+    // (no pre-created commands)
+    private Lights lights;
+    private Shooter shooter;
 
     public RobotContainer() throws IllegalDriveTypeException {
         console("[Init] RobotContainer");
@@ -65,7 +64,7 @@ public class RobotContainer {
 
         configureBindings();
         console("[DONE] RobotContainer");
-  }
+    }
 
     private void configureBindings() {
         console("[Init] configureBindings");
@@ -83,7 +82,7 @@ public class RobotContainer {
         console("[DONE] configureBindings");
     }
 
-    public void console (String message){
+    public void console(String message) {
         System.out.println("RobotContainer : " + message);
     }
 }
