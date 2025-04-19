@@ -25,8 +25,6 @@ public class Shoot extends StormCommand {
     public void initialize() {
         super.initialize();
 
-        robotState.setIsShooting(true);
-
         if (s.isUpperSensorTriggered()) {
             console("start shooting");
             shooterState = Shooter.ShooterState.SPEAKER_SHOOTING;
@@ -57,7 +55,6 @@ public class Shoot extends StormCommand {
             console("idle");
             s.setShooterState(ShooterState.IDLE);
         }
-        robotState.setIsShooting(false);
         super.end(interrupted);
     }
 }

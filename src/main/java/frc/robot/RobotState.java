@@ -8,7 +8,6 @@ public class RobotState {
     private static RobotState instance;
     private final StateSimMode stateSimMode;
     boolean upperSensorTriggered;
-    boolean shooting;
     private BatteryState batteryState;
     private ShooterState shooterState;
     private StatePeriod statePeriod;
@@ -25,6 +24,8 @@ public class RobotState {
         } else { // basic simulation
             stateSimMode = StateSimMode.SIMULATION;
         }
+
+        batteryState = BatteryState.GOOD; // let the battery monitor tell us its bad
     }
 
     public static RobotState getInstance() {
@@ -54,10 +55,6 @@ public class RobotState {
         statePeriod = period;
     }
 
-    public ShooterState getShooterState() {
-        return shooterState;
-    }
-
     public void setShooterState(ShooterState s) {
         shooterState = s;
     }
@@ -71,11 +68,15 @@ public class RobotState {
     }
 
     public boolean getIsShooting() {
-        return shooting;
+        return shooterState == ShooterState.SPEAKER_SHOOTING;
     }
 
-    public void setIsShooting(boolean shooting) {
-        this.shooting = shooting;
+    public boolean getIsIntaking() {
+        return shooterState == ShooterState.GROUND_PICKUP;
+    }
+
+    public boolean getIsOuttaking() {
+        return shooterState == ShooterState.OUTTAKE;
     }
 
     public enum StatePeriod {

@@ -10,17 +10,21 @@ import frc.robot.RobotState.StatePeriod;
 import frc.utils.StormSubsystem;
 import org.littletonrobotics.conduit.ConduitApi;
 
+import java.text.DecimalFormat;
+
 public class BatteryMonitor extends StormSubsystem {
     RobotState state;
     ConduitApi conduit;
     StatePeriod lastPeriod;
     double voltage;
     BatteryState batteryState;
+    DecimalFormat df;
 
     public BatteryMonitor() {
         state = RobotState.getInstance();
         conduit = ConduitApi.getInstance();
         lastPeriod = state.getPeriod();
+        df = new DecimalFormat("#.00");
     }
 
     @Override
@@ -39,10 +43,10 @@ public class BatteryMonitor extends StormSubsystem {
                     && newPeriod != lastPeriod
                     && Constants.Debug.debug
                     && Constants.Power.autoKill) {
-                    throw new BadBatteryException("The battery must be changed: " + voltage + " Volts");
+                    throw new BadBatteryException("The battery must be changed: " + df.format(voltage) + " Volts");
                 }
             default:
-                console("battery level: " + state.getBatteryState() + ", " + voltage + " Volts", 1000);
+                console("battery level: " + state.getBatteryState() + ", " + df.format(voltage) + " Volts", 1000);
         }
 
         voltage = conduit.getPDPVoltage();

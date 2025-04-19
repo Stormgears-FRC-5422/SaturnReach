@@ -6,6 +6,7 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import frc.robot.Constants;
+import frc.robot.Constants.SparkConstants;
 import frc.robot.RobotState;
 import frc.robot.joysticks.CrescendoJoystick;
 import frc.utils.StormSubsystem;
@@ -21,6 +22,7 @@ public class Shooter extends StormSubsystem {
     private final SparkMaxConfig lowerConfig;
     private final SparkMax upperLeaderMotor;
     private final SparkMax lowerMotor;
+    private final double upperLowerFreeSpeedRatio;
     double upperMotorSpeed = 0;
     double lowerMotorSpeed = 0;
     Boolean shooterStaged = false;
@@ -28,6 +30,7 @@ public class Shooter extends StormSubsystem {
     DoubleSupplier slider;
 
     public Shooter(CrescendoJoystick joystick) {
+        upperLowerFreeSpeedRatio = SparkConstants.FreeSpeedRPM / SparkConstants.Neo550FreeSpeedRPM;
         upperLeaderMotor = new SparkMax(Constants.Shooter.upperLeaderID, SparkLowLevel.MotorType.kBrushless);
         SparkMax upperFollowerMotor = new SparkMax(Constants.Shooter.upperFollowerID, SparkLowLevel.MotorType.kBrushless);
         lowerMotor = new SparkMax(Constants.Shooter.lowerID, SparkLowLevel.MotorType.kBrushless);

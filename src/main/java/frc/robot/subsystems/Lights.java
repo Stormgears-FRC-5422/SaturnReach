@@ -15,15 +15,7 @@ public class Lights extends StormSubsystem {
     private final RobotState robotState;
     Color RED_COLOR = Color.kRed;
     Color BLUE_COLOR = Color.kBlue;
-    Color ORANGE_COLOR = Color.kOrangeRed;
-    Color GREEN_COLOR = Color.kGreen;
-    Color DARKGREEN_COLOR = Color.kDarkGreen;
-    Color YELLOW_COLOR = Color.kYellow;
-    Color LIGHTYELLOW_COLOR = Color.kLightYellow;
-    Color PINK_COLOR = Color.kHotPink;
-    Color NO_ALLIANCE_COLOR = ORANGE_COLOR;
-    Color TAG_DETECTED_COLOR = YELLOW_COLOR;
-    Color CORAL_STORED_COLOR = DARKGREEN_COLOR;
+    Color ORANGE_COLOR = new Color(255, 32, 0);
 
     private AddressableLED addressableLED;
     private AddressableLEDBuffer addressableLEDBuffer;
@@ -46,9 +38,12 @@ public class Lights extends StormSubsystem {
         super.periodic();
         this.batteryPulse = (robotState.getBatteryState() != BatteryState.GOOD);
 
-        if (robotState.getIsShooting()) {
+        if (robotState.getIsShooting() || robotState.getIsIntaking()) {
             setRainbow();
-        } else if (robotState.getUpperSensorTriggered()) {
+        } else if (robotState.getIsOuttaking()) {
+            setSolid(BLUE_COLOR);
+        }
+        else if (robotState.getUpperSensorTriggered()) {
             setSolid(ORANGE_COLOR);
         } else {
             setSolid(RED_COLOR);
