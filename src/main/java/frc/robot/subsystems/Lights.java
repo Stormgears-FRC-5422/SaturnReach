@@ -19,6 +19,8 @@ public class Lights extends StormSubsystem {
 
     private AddressableLED addressableLED;
     private AddressableLEDBuffer addressableLEDBuffer;
+    private AddressableLEDBufferView m_left;
+    private AddressableLEDBufferView m_right;
     private boolean batteryPulse = false;
     private double batteryPulsePeriod;
 
@@ -28,6 +30,7 @@ public class Lights extends StormSubsystem {
 
         addressableLED.setLength(addressableLEDBuffer.getLength());
         addressableLED.start();
+        setViews();
 
         robotState = RobotState.getInstance();
         batteryPulsePeriod = Constants.Lights.batteryPulsePeriod;
@@ -69,11 +72,19 @@ public class Lights extends StormSubsystem {
         LEDPattern rainbow = LEDPattern.rainbow(255, 128);
         Distance kLedSpacing = Meters.of(1 / 120.0);
         LEDPattern scrollingRainbow = rainbow.scrollAtAbsoluteSpeed(MetersPerSecond.of(0.45), kLedSpacing);
-        patternApplyTo(scrollingRainbow, addressableLEDBuffer);
+        patternApplyTo(scrollingRainbow, m_left);
+        patternApplyTo(scrollingRainbow, m_right);
     }
 
     public void setSolid(Color color) {
         LEDPattern pattern = LEDPattern.solid(color);
         patternApplyTo(pattern, addressableLEDBuffer);
+    }
+
+    public void setViews() {
+        // Split led buffer into left and right views, so we can apply a different pattern to each strip
+        // Right view is reversed because LED strips are wired in series
+        m_left = addressableLEDBuffer.createView(Constants.Lights.leftViewStart, Constants.Lights.leftViewEnd);
+        m_right = addressableLEDBuffer.createView(Constants.Lights.rightViewStart, Constants.Lights.rightViewEnd).reversed();
     }
 }
