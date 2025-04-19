@@ -2,8 +2,12 @@ package frc.robot.subsystems.drive;
 
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.revrobotics.spark.SparkMax;
+
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
 import frc.robot.Constants.Drive;
 import frc.robot.subsystems.drive.config.SaturnXModuleConstants;
 import frc.robot.subsystems.drive.config.SwerveModule;
@@ -31,7 +35,7 @@ public class BasicSwerve extends DrivetrainBase {
 
         // These are convenient lies - the units basically work
         setMaxVelocities(m_maxMotorVoltage * Drive.driveSpeedScale,
-            m_maxMotorVoltage * Drive.driveSpeedScale);
+                m_maxMotorVoltage * Drive.driveSpeedScale);
 
         moduleGroup = new SwerveModuleGroup(moduleConstants);
         driveMotors = moduleGroup.getDriveMotors();
@@ -39,7 +43,8 @@ public class BasicSwerve extends DrivetrainBase {
         encoders = moduleGroup.getEncoders();
         modules = moduleGroup.getModules();
 
-        // Create this list explicitly so we can control the order and keep FRONT_LEFT, etc. honest.
+        // Create this list explicitly so we can control the order and keep FRONT_LEFT,
+        // etc. honest.
         Translation2d[] moduleTranslations = new Translation2d[4];
         moduleTranslations[FRONT_LEFT] = modules[FRONT_LEFT].moduleConfig.offset;
         moduleTranslations[FRONT_RIGHT] = modules[FRONT_RIGHT].moduleConfig.offset;
@@ -49,19 +54,19 @@ public class BasicSwerve extends DrivetrainBase {
         SwerveDriveKinematics m_kinematics = new SwerveDriveKinematics(moduleTranslations);
     }
 
+
     @Override
     public void periodic() {
-        double driveSpeed = m_chassisSpeeds.vxMetersPerSecond;
-        double steerSpeed = m_chassisSpeeds.omegaRadiansPerSecond;
+        console("driving with values "+ m_chassisSpeeds, 25);
+        double steerpos = Math.atan2(m_chassisSpeeds.vxMetersPerSecond, m_chassisSpeeds.vyMetersPerSecond);
+ 
+        for (SwerveModule module : modules) {
+            double velocity = Math.hypot(m_chassisSpeeds.vxMetersPerSecond, m_chassisSpeeds.vyMetersPerSecond);
+            module.setDriveVelocity(velocity);
+            if (velocity > 0.05) {
+                module.setSteerAngle(new Rotation2d(steerpos));
+            }
 
-        // TODO - as is, this won't quite work
-        // the existing SwerveModule class doesn't expose these methods, but
-        // I like the idea of doing that.
-        // If we don't change the SwerveModule class then we have to use driveMotors & steerMotors
-        // from above
-//        for (SwerveModule module : swerveModules) {
-//            module.setDriveSpeed(driveSpeed);
-//            module.setSteerSpeed(steerSpeed);
-//        }
+       }
     }
 }
