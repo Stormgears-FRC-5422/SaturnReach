@@ -22,15 +22,33 @@ public class Shooter extends StormSubsystem {
     private final SparkMaxConfig lowerConfig;
     private final SparkMax upperLeaderMotor;
     private final SparkMax lowerMotor;
-    private final double upperLowerFreeSpeedRatio;
+    private final double lowerSpeedScale;
     double upperMotorSpeed = 0;
     double lowerMotorSpeed = 0;
     Boolean shooterStaged = false;
     ShooterState shooterState;
     DoubleSupplier slider;
+    boolean useSlider = false;
 
     public Shooter(CrescendoJoystick joystick) {
-        upperLowerFreeSpeedRatio = SparkConstants.FreeSpeedRPM / SparkConstants.Neo550FreeSpeedRPM;
+        double freeSpeedScale = (double) SparkConstants.FreeSpeedRPM / (double) SparkConstants.Neo550FreeSpeedRPM;
+        double lowerGearRatio = Constants.Shooter.lowerGearRatio;
+        double lowerDiameter = Constants.Shooter.lowerDiameter;
+        double upperGearRatio = Constants.Shooter.upperGearRatio;
+        double upperDiameter = Constants.Shooter.upperDiameter;
+
+        console("freeSpeedScale = " + freeSpeedScale);
+
+        console("lowerGearRatio = " + lowerGearRatio);
+        console("lowerDiameter =  " + lowerDiameter);
+        console("upperGearRatio = " + upperGearRatio);
+        console("upperDiameter =  " + upperDiameter);
+
+        lowerSpeedScale = freeSpeedScale *
+            (lowerGearRatio/upperGearRatio) *
+            (upperDiameter/lowerDiameter);
+
+        console("lower:upper speed scale = " + lowerSpeedScale);
         upperLeaderMotor = new SparkMax(Constants.Shooter.upperLeaderID, SparkLowLevel.MotorType.kBrushless);
         SparkMax upperFollowerMotor = new SparkMax(Constants.Shooter.upperFollowerID, SparkLowLevel.MotorType.kBrushless);
         lowerMotor = new SparkMax(Constants.Shooter.lowerID, SparkLowLevel.MotorType.kBrushless);
@@ -67,7 +85,7 @@ public class Shooter extends StormSubsystem {
 
     @Override
     public void periodic() {
-        double sliderScale = slider.getAsDouble();
+        double sliderScale = useSlider ? slider.getAsDouble() : 1.0;
 
         upperLeaderMotor.set(upperMotorSpeed * sliderScale);
         lowerMotor.set(lowerMotorSpeed * sliderScale);
@@ -77,6 +95,7 @@ public class Shooter extends StormSubsystem {
     public void setShooterState(ShooterState state) {
         this.shooterState = state;
         robotState.setShooterState(state);
+        useSlider = false;
 
         switch (state) {
             case IDLE -> {
@@ -90,16 +109,17 @@ public class Shooter extends StormSubsystem {
                 setLimitSwitch(FORWARD, true);
                 setIdleModeAll(IdleMode.kBrake);
                 setMotorSpeeds(FORWARD,
-                    Constants.Shooter.intakeLowerMotorSpeed,
-                    Constants.Shooter.intakeUpperMotorSpeed);
+                    Constants.Shooter.intakeMaxSpeed,
+                    0);
             }
 
             case SPEAKER_SHOOTING -> {
                 shooterStaged = false;
+                useSlider = true;
                 setLimitSwitch(FORWARD, false);
                 setMotorSpeeds(FORWARD,
-                    Constants.Shooter.shootLowerMotorSpeed,
-                    Constants.Shooter.shootUpperMotorSpeed);
+                    lowerSpeedScale * Constants.Shooter.shootMaxSpeed,
+                    Constants.Shooter.shootMaxSpeed);
             }
 
             case OUTTAKE -> {
@@ -107,8 +127,8 @@ public class Shooter extends StormSubsystem {
                 setLimitSwitch(REVERSE, false);
                 setIdleModeAll(IdleMode.kCoast);
                 setMotorSpeeds(REVERSE,
-                    Constants.Shooter.outtakeMotorSpeed,
-                    Constants.Shooter.outtakeMotorSpeed);
+                    lowerSpeedScale * Constants.Shooter.outtakeMaxSpeed,
+                    Constants.Shooter.outtakeMaxSpeed);
             }
 
             case STAGED_FOR_SHOOTING -> {
