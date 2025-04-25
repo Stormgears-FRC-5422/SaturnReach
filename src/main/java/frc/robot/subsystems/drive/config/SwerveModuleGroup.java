@@ -17,10 +17,10 @@ public class SwerveModuleGroup {
 
     public SwerveModuleGroup(SaturnXModuleConstants c) {
         swerveModules = new SwerveModule[NUM_MODULES];
-        swerveModules[FRONT_LEFT] = new SwerveModule(c.flModuleConfig, c.flDrivePidConfig);
-        swerveModules[FRONT_RIGHT] = new SwerveModule(c.frModuleConfig, c.frDrivePidConfig);
-        swerveModules[BACK_RIGHT] = new SwerveModule(c.brModuleConfig, c.brDrivePidConfig);
-        swerveModules[BACK_LEFT] = new SwerveModule(c.blModuleConfig, c.blDrivePidConfig);
+        swerveModules[FRONT_LEFT] = new SwerveModule(c.flModuleConfig, c.flDrivePidConfig, c.flSteerPidConfig);
+        swerveModules[FRONT_RIGHT] = new SwerveModule(c.frModuleConfig, c.frDrivePidConfig, c.frSteerPidConfig);
+        swerveModules[BACK_RIGHT] = new SwerveModule(c.brModuleConfig, c.brDrivePidConfig, c.brSteerPidConfig);
+        swerveModules[BACK_LEFT] = new SwerveModule(c.blModuleConfig, c.blDrivePidConfig, c.blSteerPidConfig);
 
         driveArray = new SparkMax[NUM_MODULES];
         driveArray[FRONT_RIGHT] = swerveModules[FRONT_RIGHT].driveMotor;
@@ -35,10 +35,10 @@ public class SwerveModuleGroup {
         steerArray[BACK_LEFT] = swerveModules[BACK_LEFT].steerMotor;
 
         encoderArray = new CANcoder[NUM_MODULES];
-        encoderArray[FRONT_RIGHT] = swerveModules[FRONT_RIGHT].encoder;
-        encoderArray[FRONT_LEFT] = swerveModules[FRONT_LEFT].encoder;
-        encoderArray[BACK_RIGHT] = swerveModules[BACK_RIGHT].encoder;
-        encoderArray[BACK_LEFT] = swerveModules[BACK_LEFT].encoder;
+        encoderArray[FRONT_RIGHT] = swerveModules[FRONT_RIGHT].steerCANCoder;
+        encoderArray[FRONT_LEFT] = swerveModules[FRONT_LEFT].steerCANCoder;
+        encoderArray[BACK_RIGHT] = swerveModules[BACK_RIGHT].steerCANCoder;
+        encoderArray[BACK_LEFT] = swerveModules[BACK_LEFT].steerCANCoder;
     }
 
     public SparkMax[] getDriveMotors() {

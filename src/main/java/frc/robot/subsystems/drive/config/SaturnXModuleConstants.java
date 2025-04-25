@@ -1,7 +1,7 @@
 package frc.robot.subsystems.drive.config;
 
 import edu.wpi.first.math.geometry.Translation2d;
-import frc.robot.Constants;
+import frc.robot.Constants.Drive;
 
 public class SaturnXModuleConstants {
     public ModuleConfig flModuleConfig;
@@ -21,40 +21,48 @@ public class SaturnXModuleConstants {
 
     public SaturnXModuleConstants() {
         // Save some space with these convenience variables
-        double x = Constants.Drive.drivetrainTrackwidthMeters / 2.0;
-        double y = Constants.Drive.drivetrainWheelbaseMeters / 2.0;
+        double dx = Drive.drivetrainTrackwidthMeters / 2.0;
+        double dy = Drive.drivetrainWheelbaseMeters / 2.0;
 
         flModuleConfig = getDefaultModuleConfig()
-            .withDriveID(Constants.Drive.frontLeftDriveID)
-            .withSteerID(Constants.Drive.frontLeftSteerID)
-            .withEncoderID(Constants.Drive.frontLeftEncoderID)
-            .withWheelDiameter(Constants.Drive.frontLeftDiameter)
-            .withDriveInverted(!Constants.Drive.invertRight)
-            .withOffset(new Translation2d(x,y));
+            .withName("Front Left")
+            .withDriveID(Drive.frontLeftDriveID)
+            .withSteerID(Drive.frontLeftSteerID)
+            .withEncoderID(Drive.frontLeftEncoderID)
+            .withWheelDiameter(Drive.frontLeftDiameter)
+            .withDriveInverted(!Drive.invertRight)
+            .withEncoderOffset(Drive.frontLeftEncoderOffset)
+            .withOffset(new Translation2d(dx,dy));
 
         frModuleConfig = getDefaultModuleConfig()
-            .withDriveID(Constants.Drive.frontRightDriveID)
-            .withSteerID(Constants.Drive.frontRightSteerID)
-            .withEncoderID(Constants.Drive.frontRightEncoderID)
-            .withWheelDiameter(Constants.Drive.frontRightDiameter)
-            .withDriveInverted(Constants.Drive.invertRight)
-            .withOffset(new Translation2d(x,-y));
+            .withName("Front Right")
+            .withDriveID(Drive.frontRightDriveID)
+            .withSteerID(Drive.frontRightSteerID)
+            .withEncoderID(Drive.frontRightEncoderID)
+            .withWheelDiameter(Drive.frontRightDiameter)
+            .withDriveInverted(Drive.invertRight)
+            .withEncoderOffset(Drive.frontRightEncoderOffset)
+            .withOffset(new Translation2d(dx,-dy));
 
         blModuleConfig =  getDefaultModuleConfig()
-            .withDriveID(Constants.Drive.backLeftDriveID)
-            .withSteerID(Constants.Drive.backLeftSteerID)
-            .withEncoderID(Constants.Drive.backLeftEncoderID)
-            .withWheelDiameter(Constants.Drive.backLeftDiameter)
-            .withDriveInverted( ! Constants.Drive.invertRight)
-            .withOffset(new Translation2d(-x,y));
+            .withName("Back Left")
+            .withDriveID(Drive.backLeftDriveID)
+            .withSteerID(Drive.backLeftSteerID)
+            .withEncoderID(Drive.backLeftEncoderID)
+            .withWheelDiameter(Drive.backLeftDiameter)
+            .withDriveInverted( ! Drive.invertRight)
+            .withEncoderOffset(Drive.backLeftEncoderOffset)
+            .withOffset(new Translation2d(-dx,dy));
 
         brModuleConfig = getDefaultModuleConfig()
-            .withDriveID(Constants.Drive.backRightDriveID)
-            .withSteerID(Constants.Drive.backRightSteerID)
-            .withEncoderID(Constants.Drive.backRightEncoderID)
-            .withWheelDiameter(Constants.Drive.backRightDiameter)
-            .withDriveInverted( ! Constants.Drive.invertRight)
-            .withOffset(new Translation2d(-x,-y));
+            .withName("Back Right")
+            .withDriveID(Drive.backRightDriveID)
+            .withSteerID(Drive.backRightSteerID)
+            .withEncoderID(Drive.backRightEncoderID)
+            .withWheelDiameter(Drive.backRightDiameter)
+            .withDriveInverted( ! Drive.invertRight)
+            .withEncoderOffset(Drive.backRightEncoderOffset)
+            .withOffset(new Translation2d(-dx,-dy));
 
         flDrivePidConfig = getDefaultDrivePidConfig();
         frDrivePidConfig = getDefaultDrivePidConfig();
@@ -69,16 +77,18 @@ public class SaturnXModuleConstants {
 
     PidConfig getDefaultDrivePidConfig() {
         return getDefaultPidConfig()
-            .withKP(Constants.Drive.driveKP)
-            .withKI(Constants.Drive.driveKI)
-            .withKD(Constants.Drive.driveKD);
+            .withKP(Drive.driveKP)
+            .withKI(Drive.driveKI)
+            .withKD(Drive.driveKD)
+            .withKMinMax(Drive.driveKMin, Drive.driveKMax);
     }
 
     PidConfig getDefaultSteerPidConfig() {
         return getDefaultPidConfig()
-            .withKP(Constants.Drive.steerKP)
-            .withKI(Constants.Drive.steerKI)
-            .withKD(Constants.Drive.steerKD);
+            .withKP(Drive.steerKP)
+            .withKI(Drive.steerKI)
+            .withKD(Drive.steerKD)
+            .withKMinMax(Drive.steerKMin, Drive.steerKMax);
     }
 
     PidConfig getDefaultPidConfig() {
@@ -87,9 +97,12 @@ public class SaturnXModuleConstants {
 
     ModuleConfig getDefaultModuleConfig() {
         return new ModuleConfig()
-            .withDriveCoast(Constants.Drive.driveCoastMode)
-            .withSteerCoast(Constants.Drive.steerCoastMode)
-            .withSteerInverted(Constants.Drive.invertSteer);
+            .withDriveCoast(Drive.driveCoastMode)
+            .withSteerCoast(Drive.steerCoastMode)
+            .withSteerInverted(Drive.invertSteer)
+            .withDriveRatio(Drive.driveRatio)
+            .withSteerRatio(Drive.steerRatio)
+            .withInvertEncoder(Drive.invertEncoder);
     }
 
 }

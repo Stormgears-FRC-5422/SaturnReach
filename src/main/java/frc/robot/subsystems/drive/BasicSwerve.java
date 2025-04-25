@@ -18,17 +18,14 @@ public class BasicSwerve extends DrivetrainBase {
 
     final SwerveModuleGroup moduleGroup;
     final SwerveModule[] modules;
-    final SparkMax[] driveMotors;
-    final SparkMax[] steerMotors;
-    final CANcoder[] encoders;
 
     final int FRONT_LEFT = SwerveModuleGroup.FRONT_LEFT;
     final int FRONT_RIGHT = SwerveModuleGroup.FRONT_RIGHT;
     final int BACK_RIGHT = SwerveModuleGroup.BACK_RIGHT;
     final int BACK_LEFT = SwerveModuleGroup.BACK_LEFT;
 
-    // Creating my kinematics object using the module locations
-    SwerveDriveKinematics m_kinematics;
+//    // Creating my kinematics object using the module locations
+//    SwerveDriveKinematics m_kinematics;
 
     public BasicSwerve(SaturnXModuleConstants moduleConstants) {
         super();
@@ -38,18 +35,15 @@ public class BasicSwerve extends DrivetrainBase {
                 m_maxMotorVoltage * Drive.driveSpeedScale);
 
         moduleGroup = new SwerveModuleGroup(moduleConstants);
-        driveMotors = moduleGroup.getDriveMotors();
-        steerMotors = moduleGroup.getSteerMotors();
-        encoders = moduleGroup.getEncoders();
         modules = moduleGroup.getModules();
 
         // Create this list explicitly so we can control the order and keep FRONT_LEFT,
         // etc. honest.
         Translation2d[] moduleTranslations = new Translation2d[4];
-        moduleTranslations[FRONT_LEFT] = modules[FRONT_LEFT].moduleConfig.offset;
-        moduleTranslations[FRONT_RIGHT] = modules[FRONT_RIGHT].moduleConfig.offset;
-        moduleTranslations[BACK_RIGHT] = modules[BACK_RIGHT].moduleConfig.offset;
-        moduleTranslations[BACK_LEFT] = modules[BACK_LEFT].moduleConfig.offset;
+        moduleTranslations[FRONT_LEFT] = moduleConstants.flModuleConfig.offset;
+        moduleTranslations[FRONT_RIGHT] = moduleConstants.frModuleConfig.offset;
+        moduleTranslations[BACK_RIGHT] = moduleConstants.brModuleConfig.offset;
+        moduleTranslations[BACK_LEFT] = moduleConstants.blModuleConfig.offset;
 
         SwerveDriveKinematics m_kinematics = new SwerveDriveKinematics(moduleTranslations);
     }
@@ -59,14 +53,14 @@ public class BasicSwerve extends DrivetrainBase {
     public void periodic() {
         console("driving with values "+ m_chassisSpeeds, 25);
         double steerpos = Math.atan2(m_chassisSpeeds.vxMetersPerSecond, m_chassisSpeeds.vyMetersPerSecond);
- 
-        for (SwerveModule module : modules) {
-            double velocity = Math.hypot(m_chassisSpeeds.vxMetersPerSecond, m_chassisSpeeds.vyMetersPerSecond);
-            module.setDriveVelocity(velocity);
-            if (velocity > 0.05) {
-                module.setSteerAngle(new Rotation2d(steerpos));
-            }
 
+        for (SwerveModule m : modules) {
+            double velocity = Math.hypot(m_chassisSpeeds.vxMetersPerSecond, m_chassisSpeeds.vyMetersPerSecond);
+            m.setDriveVelocity(velocity);
+            if (velocity > 0.05) {
+                m.setSteerAngle(new Rotation2d(steerpos));
+            }
+            m.telemetry();
        }
     }
 }
