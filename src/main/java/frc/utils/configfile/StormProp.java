@@ -2,33 +2,30 @@ package frc.utils.configfile;
 
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Properties;
-import java.util.Set;
+import java.util.function.Function;
 
 public class StormProp {
-    // Maybe rename this file to something better
-    private static final String path =
-      Filesystem.getDeployDirectory().getPath(); // "/home/lvuser/deploy";
-    private static final String name = "config.properties";
-    private static final String backUP = "config_backup.properties";
-    private static final File configFile = new File(path, name);
 
-    // In support of auto-detection
-    private static final String rcPath = "/home/lvuser";
-    private static final String rcName = ".stormrc";
-    private static final File rcFile = new File(rcPath, rcName);
+    private static final String PATH = Filesystem.getDeployDirectory().getPath();
+    private static final String CONFIG_NAME = "config.properties";
+    private static final String BACKUP_NAME = "config_backup.properties";
+    private static final File CONFIG_FILE = new File(PATH, CONFIG_NAME);
 
-    private static final HashMap<String, Double> m_number_map = new HashMap<>();
-    private static final HashMap<String, Integer> m_int_map = new HashMap<>();
-    private static final HashMap<String, Boolean> m_bool_map = new HashMap<>();
-    private static final HashMap<String, String> m_string_map = new HashMap<>();
+    private static final String RC_PATH = "/home/lvuser";
+    private static final String RC_NAME = ".stormrc";
+    private static final File RC_FILE = new File(RC_PATH, RC_NAME);
+
+    private static final HashMap<String, Double> NUMBER_MAP = new HashMap<>();
+    private static final HashMap<String, Integer> INTEGER_MAP = new HashMap<>();
+    private static final HashMap<String, Boolean> BOOLEAN_MAP = new HashMap<>();
+    private static final HashMap<String, String> STRING_MAP = new HashMap<>();
     private static Properties properties;
     private static Properties overrideProperties;
     private static Properties simProperties;
@@ -37,33 +34,35 @@ public class StormProp {
     private static boolean simInitialized = false;
     private static boolean debug = false;
 
-
-
     public static void init() {
         System.out.println("Running in directory " + System.getProperty("user.dir"));
-        System.out.println("Trying to use file " + configFile.getAbsolutePath());
+        System.out.println("Trying to use file " + CONFIG_FILE.getAbsolutePath());
         properties = new Properties();
         FileInputStream inputStream = null;
         try {
-            inputStream = new FileInputStream(configFile);
+            inputStream = new FileInputStream(CONFIG_FILE);
             properties.load(inputStream);
             System.out.println("*****************");
             System.out.println("Loading Properties");
             System.out.println("*****************");
-        } catch (IOException e) {
+        } catch (FileNotFoundException e) {
             System.out.println("Using backup config file");
             try {
-                inputStream = new FileInputStream(new File("/home/lvuser/deploy", backUP));
+                inputStream = new FileInputStream(new File("/home/lvuser/deploy", BACKUP_NAME));
                 properties.load(inputStream);
-            } catch (IOException w) {
-                System.out.println("Failed to find back up file. " + e.getMessage());
+            } catch (FileNotFoundException fnf) {
+                System.out.println("Failed to find backup file: " + fnf.getMessage());
+            } catch (IOException ioe) {
+                System.out.println("Error reading backup file: " + ioe.getMessage());
             }
+        } catch (IOException e) {
+            System.out.println("Error reading config file: " + e.getMessage());
         } finally {
             if (inputStream != null) {
                 try {
                     inputStream.close();
                 } catch (IOException e) {
-                    System.out.println("Error coming from config. This should not run. "  + e.getMessage());
+                    System.out.println("Error closing config file: " + e.getMessage());
                 }
             }
         }
@@ -77,50 +76,55 @@ public class StormProp {
 
     public static void overrideInit() {
         String overrideName = RobotBase.isSimulation()
-            ? properties.getProperty("simOverride")
-            : properties.getProperty("override");
+                ? properties.getProperty("simOverride")
+                : properties.getProperty("override");
 
         overrideName = removeCast(overrideName);
 
-        if ( overrideName.equalsIgnoreCase("auto")) {
+        if (overrideName.equalsIgnoreCase("auto")) {
             System.out.println("Using AUTOMATIC configuration");
             Properties rcProperties = new Properties();
             FileInputStream rcStream = null;
             try {
-                System.out.println("rcFile path: " + rcFile.getAbsolutePath());
-                rcStream = new FileInputStream(rcFile);
+                System.out.println("rcFile path: " + RC_FILE.getAbsolutePath());
+                rcStream = new FileInputStream(RC_FILE);
                 rcProperties.load(rcStream);
                 System.out.println("autoConfig setting " + rcProperties.getProperty("autoConfig"));
                 overrideName = properties.getProperty(rcProperties.getProperty("autoConfig"));
-            } catch (Exception e) {
-                System.out.println("Failed to find autoConfig file... " + e.getMessage());
+            } catch (FileNotFoundException e) {
+                System.out.println("Failed to find autoConfig file: " + e.getMessage());
+            } catch (IOException e) {
+                System.out.println("Error reading autoConfig file: " + e.getMessage());
             } finally {
                 if (rcStream != null) {
                     try {
                         rcStream.close();
                     } catch (IOException e) {
-                        System.out.println("Error coming from autoConfig. This should not run. " + e.getMessage());
+                        System.out.println("Error closing autoConfig file: " + e.getMessage());
                     }
                 }
             }
         }
 
         System.out.println("Using override file " + overrideName);
-        File overrideConfigFile = new File(path, overrideName);
+        File overrideConfigFile = new File(PATH, overrideName);
         overrideProperties = new Properties();
 
-        FileInputStream OverrideInputStream = null;
+        FileInputStream overrideInputStream = null;
         try {
-            OverrideInputStream = new FileInputStream(overrideConfigFile);
-            overrideProperties.load(OverrideInputStream);
-        } catch (IOException e) {
+            overrideInputStream = new FileInputStream(overrideConfigFile);
+            overrideProperties.load(overrideInputStream);
+        } catch (FileNotFoundException e) {
             System.out.println("!!! No override file detected !!!");
-        }
-        if (OverrideInputStream != null) {
-            try {
-                OverrideInputStream.close();
-            } catch (IOException e) {
-                System.out.println("Error coming from override config. This should not run");
+        } catch (IOException e) {
+            System.out.println("Error reading override file: " + e.getMessage());
+        } finally {
+            if (overrideInputStream != null) {
+                try {
+                    overrideInputStream.close();
+                } catch (IOException e) {
+                    System.out.println("Error closing override file: " + e.getMessage());
+                }
             }
         }
 
@@ -140,20 +144,23 @@ public class StormProp {
         simName = removeCast(simName);
 
         System.out.println("Using simulation override file " + simName);
-        File simConfigFile = new File(path, simName);
+        File simConfigFile = new File(PATH, simName);
 
-        FileInputStream SimOverrideInputStream = null;
+        FileInputStream simInputStream = null;
         try {
-            SimOverrideInputStream = new FileInputStream(simConfigFile);
-            simProperties.load(SimOverrideInputStream);
-        } catch (IOException e) {
+            simInputStream = new FileInputStream(simConfigFile);
+            simProperties.load(simInputStream);
+        } catch (FileNotFoundException e) {
             System.out.println("!!! No simulation override file detected !!!");
-        }
-        if (SimOverrideInputStream != null) {
-            try {
-                SimOverrideInputStream.close();
-            } catch (IOException e) {
-                System.out.println("Error coming from simulation override config. This should not run");
+        } catch (IOException e) {
+            System.out.println("Error reading simulation file: " + e.getMessage());
+        } finally {
+            if (simInputStream != null) {
+                try {
+                    simInputStream.close();
+                } catch (IOException e) {
+                    System.out.println("Error closing simulation file: " + e.getMessage());
+                }
             }
         }
 
@@ -161,174 +168,120 @@ public class StormProp {
     }
 
     private static String removeCast(String value) {
-        return value.substring(value.indexOf(")") + 1).trim();
+        if (value == null) {
+            throw new IllegalArgumentException("Property value cannot be null");
+        }
+        int endIndex = value.indexOf(")");
+        if (endIndex == -1) {
+            throw new IllegalArgumentException("Malformed property value, missing type cast: " + value);
+        }
+        return value.substring(endIndex + 1).trim();
     }
+
     private static String getPropString(String key) {
-        if (!initialized) init();
-        if (!overrideInitialized) overrideInit();
-        if (!simInitialized) simInit();
+        ensureInitialized();
 
-        if (simProperties.containsKey(key)) return(removeCast(simProperties.getProperty(key)));
-        if (overrideProperties.containsKey(key)) return(removeCast(overrideProperties.getProperty(key)));
-        if (properties.containsKey(key)) return(removeCast(properties.getProperty(key)));
-
+        if (simProperties != null && simProperties.containsKey(key)) {
+            return removeCast(simProperties.getProperty(key));
+        }
+        if (overrideProperties != null && overrideProperties.containsKey(key)) {
+            return removeCast(overrideProperties.getProperty(key));
+        }
+        if (properties != null && properties.containsKey(key)) {
+            return removeCast(properties.getProperty(key));
+        }
         return "";
     }
 
-    public static String getString(String key, String defaultVal) {
-        String result = getStringInternal(key,defaultVal);
-        if(debug) System.out.println("debug property " + key + " = " + result);
-
-        return result;
-    }
-
-    public static String getString(String prefix, String key, String defaultVal) {
-        String result = (prefix.equals("general")) ? getStringInternal(key,defaultVal) : getStringInternal(prefix + "." + key,defaultVal);
-
-        if(debug) System.out.println("debug property " + prefix + "." + key + " = " + result);
-
-        return result;
-    }
-
-    private static String getStringInternal(String key, String defaultVal) {
-        try {
-            if (m_string_map.containsKey(key)) return (m_string_map.get(key));
-            else if (getPropString(key) != null) {
-                m_string_map.put(key, getPropString(key));
-                return (m_string_map.get(key));
-            } else {
-                System.out.println("WARNING: default used for key " + key);
-                return (defaultVal);
-            }
-        } catch (Exception e) {
-            System.out.println("WARNING: default used for key " + key);
-            return (defaultVal);
-        }
-    }
-
-    public static double getNumber(String key, Double defaultVal) {
-        double result = getNumberInternal(key, defaultVal);
-        if(debug) System.out.println("debug property " + key + " = " + result);
-
-        return result;
-    }
-
-    public static double getNumber(String prefix, String key, Double defaultVal) {
-        double result = (prefix.equals("general")) ? getNumberInternal(key,defaultVal) : getNumberInternal(prefix + "." + key,defaultVal);
-        if(debug) System.out.println("debug property " + prefix + "." + key + " = " + result);
-
-        return result;
-    }
-    private static double getNumberInternal(String key, Double defaultVal) {
-        try {
-            if (m_number_map.containsKey(key)) return (m_number_map.get(key));
-            else if (getPropString(key) != null) {
-                m_number_map.put(key, Double.parseDouble(getPropString(key)));
-                return (m_number_map.get(key));
-            } else {
-                System.out.println("WARNING: default used for key " + key);
-                return (defaultVal);
-            }
-        } catch (Exception e) {
-            System.out.println("WARNING: default used for key " + key);
-            return (defaultVal);
-        }
-    }
-
-    public static int getInt(String key, int defaultVal) {
-        int result = getIntInternal(key, defaultVal);
-        if(debug) System.out.println("debug property " + key + " = " + result);
-
-        return result;
-    }
-    public static int getInt(String prefix, String key, int defaultVal) {
-        int result = (prefix.equals("general")) ? getIntInternal(key,defaultVal) : getIntInternal(prefix + "." + key,defaultVal);
-        if(debug) System.out.println("debug property " + prefix + "." + key + " = " + result);
-
-        return result;
-    }
-
-
-    private static int getIntInternal(String key, int defaultVal) {
-        try {
-            if (m_int_map.containsKey(key)) return (m_int_map.get(key));
-            else if (getPropString(key) != null) {
-                m_int_map.put(key, Integer.parseInt(getPropString(key)));
-                return (m_int_map.get(key));
-            } else {
-                System.out.println("WARNING: default used for key " + key);
-                return (defaultVal);
-            }
-        } catch (Exception e) {
-            System.out.println("WARNING: default used for key " + key);
-            return (defaultVal);
-        }
-    }
-
-    public static boolean getBoolean(String key, Boolean defaultVal) {
-        boolean result = getBooleanInternal(key, defaultVal);
-        if(debug) System.out.println("debug property " + key + " = " + result);
-
-        return result;
-    }
-
-    public static boolean getBoolean(String prefix, String key, Boolean defaultVal) {
-        boolean result = (prefix.equals("general")) ? getBooleanInternal(key,defaultVal) : getBooleanInternal(prefix + "." + key,defaultVal);
-        if(debug) System.out.println("debug property " + key + " = " + result);
-
-        return result;
-    }
-
-    private static boolean getBooleanInternal(String key, Boolean defaultVal) {
-        try {
-            if (m_bool_map.containsKey(key)) return (m_bool_map.get(key));
-            else if (getPropString(key) != null) {
-                m_bool_map.put(key, getPropString(key).equalsIgnoreCase("true"));
-                return (m_bool_map.get(key));
-            } else {
-                System.out.println("WARNING: default used for key " + key);
-                return (defaultVal);
-            }
-        } catch (Exception e) {
-            System.out.println("WARNING: default used for key " + key);
-            return (defaultVal);
-        }
-    }
-
-    public static void toSmartDashBoard() {
+    private static void ensureInitialized() {
         if (!initialized) {
             init();
         }
         if (!overrideInitialized) {
             overrideInit();
         }
-        String[] Blacklist = {"robotName", "hasNavX", "rearRightTalonId", "rearLeftTalonId", "frontRightTalonId", "frontLeftTalonId", "wheelRadius", "navXconnection"};
-        Set<String> keys = properties.stringPropertyNames();
-        for (String key : keys) {
-      if (!Arrays.asList(Blacklist).contains(key)) {
-        //                SmartDashboard.putString(key, getPropString(key));
-      }
+        if (!simInitialized) {
+            simInit();
         }
     }
 
-    //updates properties object using values from SmartDashboard
-    public static void updateProperties() {
-        if (!initialized) {
-            init();
-        }
-        Set<String> keys = properties.stringPropertyNames();
-        for (String key : keys) {
-            String str = SmartDashboard.getString(key, "MISSING");
-            if (!str.equals("MISSING")) {
-                overrideProperties.setProperty(key, str);
-                if (m_int_map.containsKey(key)) m_int_map.put(key, Integer.parseInt(str));
-                else if (m_number_map.containsKey(key)) m_number_map.put(key, Double.parseDouble(str));
-                else if (m_bool_map.containsKey(key)) m_bool_map.put(key, str.equalsIgnoreCase("true"));
-                else if (m_string_map.containsKey(key)) m_string_map.put(key, str);
+    private static <T> T getValueWithCache(String key, String prefix, T defaultVal,
+            HashMap<String, T> cache,
+            Function<String, T> parser) {
+        String fullKey = prefix.equals("general") ? key : prefix + "." + key;
+
+        try {
+            if (cache.containsKey(fullKey)) {
+                return cache.get(fullKey);
             }
+
+            String propValue = getPropString(fullKey);
+            if (!propValue.isEmpty()) {
+                try {
+                    T value = parser.apply(propValue);
+                    cache.put(fullKey, value);
+                    return value;
+                } catch (NumberFormatException e) {
+                    System.out.println("WARNING: Error parsing numeric property " + fullKey + ": " + e.getMessage());
+                } catch (IllegalArgumentException e) {
+                    System.out.println("WARNING: Error parsing property " + fullKey + ": " + e.getMessage());
+                }
+            }
+        } catch (SecurityException e) {
+            System.out.println("WARNING: Security error accessing property " + fullKey + ": " + e.getMessage());
         }
+
+        System.out.println("WARNING: default used for key " + fullKey);
+        return defaultVal;
     }
 
+    public static String getString(String prefix, String key, String defaultVal) {
+        String result = getValueWithCache(key, prefix, defaultVal, STRING_MAP, str -> str);
+        if (debug) {
+            System.out.println("debug property " + prefix + "." + key + " = " + result);
+        }
+        return result;
+    }
 
+    public static double getNumber(String prefix, String key, Double defaultVal) {
+        double result = getValueWithCache(key, prefix, defaultVal, NUMBER_MAP, Double::parseDouble);
+        if (debug) {
+            System.out.println("debug property " + prefix + "." + key + " = " + result);
+        }
+        return result;
+    }
 
+    public static int getInt(String prefix, String key, int defaultVal) {
+        int result = getValueWithCache(key, prefix, defaultVal, INTEGER_MAP, Integer::parseInt);
+        if (debug) {
+            System.out.println("debug property " + prefix + "." + key + " = " + result);
+        }
+        return result;
+    }
+
+    public static boolean getBoolean(String prefix, String key, Boolean defaultVal) {
+        boolean result = getValueWithCache(key, prefix, defaultVal, BOOLEAN_MAP,
+                str -> str.equalsIgnoreCase("true"));
+        if (debug) {
+            System.out.println("debug property " + prefix + "." + key + " = " + result);
+        }
+        return result;
+    }
+
+    // Convenience methods for general prefix
+    public static String getString(String key, String defaultVal) {
+        return getString("general", key, defaultVal);
+    }
+
+    public static double getNumber(String key, Double defaultVal) {
+        return getNumber("general", key, defaultVal);
+    }
+
+    public static int getInt(String key, int defaultVal) {
+        return getInt("general", key, defaultVal);
+    }
+
+    public static boolean getBoolean(String key, Boolean defaultVal) {
+        return getBoolean("general", key, defaultVal);
+    }
 }

@@ -1,7 +1,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.RobotBase;
-import frc.robot.elastic.DriveOptions;
+import frc.robot.elastic.options.DriveOptions;
 import frc.robot.subsystems.BatteryMonitor.BatteryState;
 import frc.robot.subsystems.Shooter.ShooterState;
 

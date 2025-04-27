@@ -1,6 +1,5 @@
 package frc.robot.elastic;
 
-import edu.wpi.first.networktables.Topic;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -14,31 +13,33 @@ public class OptionsController extends ElasticDashboardTuner {
 
     private final List<Option<?>> options = new ArrayList<>();
     private boolean initialized = false;
+    private final String tableName;
 
     public OptionsController(String tableName) {
         super(tableName);
+        this.tableName = tableName;
     }
 
     protected Option<Boolean> createBooleanOption(String label, boolean defaultValue) {
-        Option<Boolean> option = new Option<>(label, defaultValue);
+        Option<Boolean> option = new Option<>(label, defaultValue, tableName);
         options.add(option);
         return option;
     }
 
     protected Option<Double> createNumberOption(String label, double defaultValue) {
-        Option<Double> option = new Option<>(label, defaultValue);
+        Option<Double> option = new Option<>(label, defaultValue, tableName);
         options.add(option);
         return option;
     }
 
     protected Option<Integer> createIntegerOption(String label, int defaultValue) {
-        Option<Integer> option = new Option<>(label, defaultValue);
+        Option<Integer> option = new Option<>(label, defaultValue, tableName);
         options.add(option);
         return option;
     }
 
     protected Option<String> createStringOption(String label, String defaultValue) {
-        Option<String> option = new Option<>(label, defaultValue);
+        Option<String> option = new Option<>(label, defaultValue, tableName);
         options.add(option);
         return option;
     }
@@ -74,7 +75,7 @@ public class OptionsController extends ElasticDashboardTuner {
                 option.setPublisherAndSubscriber(pub, sub);
             } else {
                 throw new IllegalArgumentException(
-                        "Unsupported option type: " + value.getClass());
+                        "Unsupported option type: " + (value != null ? value.getClass().getName() : "null"));
             }
         }
         initialized = true;
@@ -98,6 +99,9 @@ public class OptionsController extends ElasticDashboardTuner {
                 ((Option<Integer>) option).updateValue((int) option.getDoubleSubscriber().get());
             } else if (value instanceof String) {
                 ((Option<String>) option).updateValue(option.getStringSubscriber().get());
+            } else {
+                throw new IllegalArgumentException(
+                        "Unsupported option type: " + (value != null ? value.getClass().getName() : "null"));
             }
         }
     }

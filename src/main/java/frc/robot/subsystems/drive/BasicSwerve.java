@@ -7,7 +7,7 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.RobotState;
-import frc.robot.elastic.DriveOptions;
+import frc.robot.elastic.options.DriveOptions;
 import frc.robot.subsystems.drive.config.SwerveModuleGroup;
 import frc.robot.subsystems.drive.config.SwerveModule;
 import static edu.wpi.first.units.Units.MetersPerSecond;

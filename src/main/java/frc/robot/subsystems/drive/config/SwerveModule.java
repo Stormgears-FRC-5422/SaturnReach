@@ -15,12 +15,13 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.LinearVelocity;
 import frc.robot.Constants;
 import frc.robot.RobotState;
-import frc.robot.elastic.DriveOptions;
+import frc.robot.elastic.options.DriveOptions;
 import org.littletonrobotics.junction.Logger;
 
 import static edu.wpi.first.units.Units.*;
 
 public class SwerveModule {
+
     public final int index;
     public final CANcoder steerCANCoder;
     public final SparkMax driveMotor;

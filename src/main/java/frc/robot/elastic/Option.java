@@ -17,14 +17,16 @@ import edu.wpi.first.networktables.StringSubscriber;
 public class Option<T> {
 
     private final String label;
+    private final String tableName;
     private T value;
     private boolean dirty;
     private Object publisher;
     private Object subscriber;
 
-    public Option(String label, T defaultValue) {
+    public Option(String label, T defaultValue, String tableName) {
         this.label = label;
         this.value = defaultValue;
+        this.tableName = tableName;
         this.dirty = false;
     }
 
@@ -69,7 +71,7 @@ public class Option<T> {
             ((StringPublisher) publisher).set(strVal);
         } else {
             throw new IllegalArgumentException(
-                    "Unsupported option type: " + value.getClass());
+                    "Unsupported option type: " + (value != null ? value.getClass().getName() : "null"));
         }
     }
 
@@ -135,7 +137,7 @@ public class Option<T> {
     }
 
     private void console(String message) {
-        System.out.println("Option [" + label + "]: "  + message);
+        System.out.println("Option [" + tableName + "/" + label + "]: " + message);
     }
 
 }
