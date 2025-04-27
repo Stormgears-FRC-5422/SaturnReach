@@ -185,11 +185,11 @@ public class SwerveModule {
     }
 
     public void setSwerveModuleState(SwerveModuleState state) {
-        if (options.angleOptimize.get()) {
+        if (Constants.Drive.angleOptimize) {
             state.optimize(new Rotation2d(Degrees.of(steerAngle)));
         }
 
-        if (options.cosineOptimize.get()) {
+        if (Constants.Drive.cosineOptimize) {
             state.cosineScale(new Rotation2d(Degrees.of(steerAngle)));
         }
 

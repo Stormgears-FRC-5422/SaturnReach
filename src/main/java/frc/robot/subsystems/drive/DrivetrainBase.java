@@ -22,8 +22,8 @@ public abstract class DrivetrainBase extends StormSubsystem {
     public DrivetrainBase() {
         setDriveSpeedScale(Drive.driveSpeedScale);
         driveFlip = false;
-        fieldRelativeOn = false;
-    }
+        fieldRelativeOn = true;
+    }   
 
     protected final void setDriveFlip(boolean flip) {
         driveFlip = flip;
@@ -65,8 +65,6 @@ public abstract class DrivetrainBase extends StormSubsystem {
     }
 
     public void drive(ChassisSpeeds speeds, boolean fieldRelative, double speedScale) {
-        m_fieldRelative = fieldRelative;
-
         if (fieldRelativeOn && fieldRelative) {
             Rotation2d rotation = getRotation();
             m_chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(speeds, rotation);
@@ -94,4 +92,10 @@ public abstract class DrivetrainBase extends StormSubsystem {
     public Rotation2d getRotation() {
         return new Rotation2d();
     }
+
+    // Teach the drive that the current orientation is facing the opposite end of the field
+    // this function is ideally alliance aware, and manages the pose and gyro as needed
+    public void resetOrientation() {
+    }
+
 }

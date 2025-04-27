@@ -4,6 +4,8 @@ import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import frc.robot.Constants.ButtonBoard;
 import frc.robot.Constants.Drive;
+import frc.robot.Options.DriveOptions;
+
 import frc.robot.joysticks.CrescendoJoystick;
 import frc.robot.subsystems.drive.DrivetrainBase;
 import frc.utils.StormCommand;
@@ -24,6 +26,7 @@ public class JoyStickDrive extends StormCommand {
     private SlewRateLimiter omegaScaleLimiter;
 
     private boolean fieldRelative;
+    private DriveOptions options;
 
     // Note that we want the joystick to mostly work even if there is no drive.
     // So this won't really do anything if the drivetrain is NULL, but it will log.
@@ -42,13 +45,14 @@ public class JoyStickDrive extends StormCommand {
         txSupplier = joystick::getWpiX;
         tySupplier = joystick::getWpiY;
         omegaSupplier = joystick::getOmegaSpeed;
+
+        options = DriveOptions.create();
     }
 
     @Override
     public void initialize() {
         super.initialize();
         drivetrain.setDriveSpeedScale(Drive.driveSpeedScale);
-        fieldRelative = false; // by definition for the outreach robot
         xScaleLimiter = new SlewRateLimiter(Drive.linearRateLimiter); //make it into a constant
         yScaleLimiter = new SlewRateLimiter(Drive.linearRateLimiter);
         omegaScaleLimiter = new SlewRateLimiter(Drive.turnRateLimiter);
@@ -57,6 +61,8 @@ public class JoyStickDrive extends StormCommand {
     @Override
     public void execute() {
         super.execute();
+        fieldRelative = options.useFieldRelative.get();
+
         double x = txSupplier.getAsDouble();
         double y = tySupplier.getAsDouble();
         double omega = omegaSupplier.getAsDouble();

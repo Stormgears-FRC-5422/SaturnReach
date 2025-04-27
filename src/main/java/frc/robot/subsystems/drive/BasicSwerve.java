@@ -50,6 +50,11 @@ public class BasicSwerve extends DrivetrainBase {
     @Override
     public void periodic() {
         super.periodic();
+
+        if (options.resetOrientation.get()) {
+            resetOrientation();
+            options.resetOrientation.setValue(false);
+        }
         moduleGroup.periodic();
 
 //        console("m_chassisSpeeds = " + m_chassisSpeeds, 25);
@@ -85,6 +90,11 @@ public class BasicSwerve extends DrivetrainBase {
     @Override
     public Rotation2d getRotation() {
         return new Rotation2d(Degrees.of(-navx.getAngle()));
+    }
+
+    @Override
+    public void resetOrientation() {
+        navx.zeroYaw();
     }
 
     public void stop() {

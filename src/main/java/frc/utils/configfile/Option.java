@@ -7,6 +7,8 @@ import edu.wpi.first.networktables.DoubleSubscriber;
 import edu.wpi.first.networktables.StringPublisher;
 import edu.wpi.first.networktables.StringSubscriber;
 
+import java.util.Objects;
+
 /**
  * Represents a single configurable option that can be modified through Elastic
  * dashboard. Each option has a value, label, and tracks whether it has been
@@ -48,7 +50,15 @@ public class Option<T> {
      * Update the value and mark as dirty if changed
      */
     void updateValue(T newValue) {
-        if (!newValue.equals(value)) {
+        boolean changed;
+        if (value instanceof Boolean && newValue instanceof Boolean) {
+            // Direct comparison for booleans to avoid any boxing issues
+            changed = ((Boolean) value).booleanValue() != ((Boolean) newValue).booleanValue();
+        } else {
+            changed = !Objects.equals(newValue, value);
+        }
+
+        if (changed) {
             value = newValue;
             dirty = true;
             updatePublisher();
@@ -138,6 +148,15 @@ public class Option<T> {
 
     private void console(String message) {
         System.out.println("Option [" + tableName + "/" + label + "]: " + message);
+    }
+
+    /**
+     * Set a new value and publish it to NetworkTables
+     *
+     * @param newValue The new value to set
+     */
+    public void setValue(T newValue) {
+        updateValue(newValue);
     }
 
 }
