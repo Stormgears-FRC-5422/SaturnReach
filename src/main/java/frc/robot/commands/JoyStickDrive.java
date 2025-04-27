@@ -72,7 +72,7 @@ public class JoyStickDrive extends StormCommand {
         }
 
         ChassisSpeeds speeds = new ChassisSpeeds(x, y, omega);
-       drivetrain.percentOutputDrive(speeds, fieldRelative);
+        drivetrain.percentOutputDrive(speeds, fieldRelative);
 
         Logger.recordOutput("x", x);
         Logger.recordOutput("y", y);

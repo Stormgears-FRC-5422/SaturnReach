@@ -136,6 +136,7 @@ public class SwerveModule {
 
         Angle canCoderAngle = steerCANCoder.getPosition().getValue();
 
+        Logger.recordOutput("Mod " + name + "/driveOutput", driveMotor.get());
         Logger.recordOutput("Mod " + name + "/driveVelocity", driveVelocity);
         Logger.recordOutput("Mod " + name + "/targetDriveVelocity", tgtDriveVelocity);
         Logger.recordOutput("Mod " + name + "/drivePosition", driveEncoder.getPosition());

@@ -3,6 +3,8 @@
 // the WPILib BSD license file in the root directory of this project.
 package frc.robot;
 
+import edu.wpi.first.net.WebServer;
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.RobotState.StatePeriod;
@@ -110,6 +112,13 @@ public class Robot extends LoggedRobot {
             default ->
                 "Unknown";
         });
+    }
+
+    @Override
+    public void robotInit() {
+        if (Constants.Toggles.useWebServer) {
+            WebServer.start(5800, Filesystem.getDeployDirectory().getPath());
+        }
     }
 
     @Override
