@@ -1,8 +1,7 @@
-package frc.robot.elastic;
+package frc.utils.configfile;
 
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.DoubleSubscriber;
-import edu.wpi.first.networktables.NetworkTable;
 import frc.robot.subsystems.drive.config.PidConfig;
 
 /**
@@ -27,7 +26,7 @@ public final class PidTuningGroup {
 
     private final PidConfig config;
 
-    public PidTuningGroup(ElasticDashboardTuner tuner, String prefix, PidConfig config) {
+    public PidTuningGroup(DashboardTuner tuner, String prefix, PidConfig config) {
         this.config = config;
 
         var kpTopic = tuner.getTable().getDoubleTopic(prefix + "/kP");

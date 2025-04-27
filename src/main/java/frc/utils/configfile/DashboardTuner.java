@@ -1,4 +1,4 @@
-package frc.robot.elastic;
+package frc.utils.configfile;
 
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -8,12 +8,12 @@ import edu.wpi.first.networktables.NetworkTableInstance;
  * published as a NetworkTableEntry that can be configured as a NumberSlider
  * widget in Elastic.
  */
-public class ElasticDashboardTuner {
+public class DashboardTuner {
 
     protected final NetworkTable table;
     private final String name;
 
-    public ElasticDashboardTuner(String tableName) {
+    public DashboardTuner(String tableName) {
         this.name = tableName;
         this.table = NetworkTableInstance.getDefault().getTable("Elastic/" + tableName);
     }

@@ -1,4 +1,4 @@
-package frc.robot.elastic;
+package frc.utils.configfile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,7 +9,7 @@ import java.util.Objects;
  * Elastic dashboard. Each option is published to NetworkTables and can be
  * configured through Elastic widgets.
  */
-public class OptionsController extends ElasticDashboardTuner {
+public class OptionsController extends DashboardTuner {
 
     private final List<Option<?>> options = new ArrayList<>();
     private boolean initialized = false;

@@ -1,8 +1,10 @@
 package frc.robot.elastic;
 
 import frc.robot.subsystems.drive.config.PidConfig;
+import frc.utils.configfile.DashboardTuner;
+import frc.utils.configfile.PidTuningGroup;
 
-public class SwerveModuleTuner extends ElasticDashboardTuner {
+public class SwerveModuleTuner extends DashboardTuner {
 
     private final PidTuningGroup drivePidTuning;
     private final PidTuningGroup steerPidTuning;

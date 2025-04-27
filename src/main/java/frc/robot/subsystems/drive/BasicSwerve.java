@@ -6,8 +6,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.RobotState;
-import frc.robot.elastic.options.DriveOptions;
+import frc.robot.Options.DriveOptions;
 import frc.robot.subsystems.drive.config.SwerveModuleGroup;
 import frc.robot.subsystems.drive.config.SwerveModule;
 import static edu.wpi.first.units.Units.MetersPerSecond;
@@ -24,7 +23,7 @@ public class BasicSwerve extends DrivetrainBase {
     public BasicSwerve() {
         super();
 
-        options = RobotState.getInstance().getDriveOptions();
+        options = DriveOptions.create();
 
         moduleGroup = new SwerveModuleGroup();
         setMaxVelocities(moduleGroup.getMaxLinearVelocity().in(MetersPerSecond),
@@ -46,7 +45,6 @@ public class BasicSwerve extends DrivetrainBase {
     @Override
     public void periodic() {
         super.periodic();
-        options.periodic();
         moduleGroup.periodic();
 
         if (options.allowRotation.get()) {

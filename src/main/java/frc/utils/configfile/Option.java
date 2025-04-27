@@ -1,4 +1,4 @@
-package frc.robot.elastic;
+package frc.utils.configfile;
 
 import edu.wpi.first.networktables.BooleanPublisher;
 import edu.wpi.first.networktables.BooleanSubscriber;

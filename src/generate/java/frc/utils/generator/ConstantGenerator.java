@@ -151,7 +151,7 @@ public class ConstantGenerator {
 
         String inputFileDir = args[0];
         String outputFileName = args[1];
-        String optionsDir = outputFileName.substring(0, outputFileName.lastIndexOf("/")) + "/elastic/options";
+        String optionsDir = outputFileName.substring(0, outputFileName.lastIndexOf("/"));
 
         try {
             init(inputFileDir);
@@ -163,7 +163,7 @@ public class ConstantGenerator {
                 System.out.println("Constants file generated successfully.");
             }
 
-            // Generate Options classes
+            // Generate Options class
             OptionsGenerator.generateOptions(allConstants, optionsDir);
 
         } catch (IOException e) {

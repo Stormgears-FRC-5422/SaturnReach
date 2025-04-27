@@ -1,7 +1,6 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.RobotBase;
-import frc.robot.elastic.options.DriveOptions;
 import frc.robot.subsystems.BatteryMonitor.BatteryState;
 import frc.robot.subsystems.Shooter.ShooterState;
 
@@ -9,11 +8,24 @@ public class RobotState {
 
     private static RobotState instance;
     private final StateSimMode stateSimMode;
-    private final DriveOptions driveOptions;
-    boolean upperSensorTriggered;
+    private StatePeriod statePeriod;
+    private boolean upperSensorTriggered;
     private BatteryState batteryState;
     private ShooterState shooterState;
-    private StatePeriod statePeriod;
+
+    public enum StateSimMode {
+        REAL,
+        SIMULATION,
+        AKIT_REPLAY,
+        AKIT_SIM
+    }
+
+    public enum StatePeriod {
+        DISABLED,
+        AUTONOMOUS,
+        TELEOP,
+        TEST
+    }
 
     private RobotState() {
         if (RobotBase.isReal()) {
@@ -28,8 +40,8 @@ public class RobotState {
             stateSimMode = StateSimMode.SIMULATION;
         }
 
-        batteryState = BatteryState.GOOD; // let the battery monitor tell us its bad
-        driveOptions = new DriveOptions();
+        batteryState = BatteryState.GOOD;
+        shooterState = ShooterState.IDLE;
     }
 
     public static RobotState getInstance() {
@@ -39,10 +51,6 @@ public class RobotState {
 
         instance = new RobotState();
         return instance;
-    }
-
-    public DriveOptions getDriveOptions() {
-        return driveOptions;
     }
 
     public StateSimMode getSimMode() {
@@ -65,16 +73,16 @@ public class RobotState {
         statePeriod = period;
     }
 
-    public void setShooterState(ShooterState s) {
-        shooterState = s;
-    }
-
     public BatteryState getBatteryState() {
-        return this.batteryState;
+        return batteryState;
     }
 
-    public void setBatteryState(BatteryState batteryState) {
-        this.batteryState = batteryState;
+    public void setBatteryState(BatteryState state) {
+        batteryState = state;
+    }
+
+    public void setShooterState(ShooterState state) {
+        shooterState = state;
     }
 
     public boolean getIsShooting() {
@@ -87,13 +95,5 @@ public class RobotState {
 
     public boolean getIsOuttaking() {
         return shooterState == ShooterState.OUTTAKE;
-    }
-
-    public enum StatePeriod {
-        NONE, DISABLED, AUTONOMOUS, TELEOP, TEST
-    }
-
-    public enum StateSimMode {
-        REAL, SIMULATION, AKIT_REPLAY, AKIT_SIM;
     }
 }

@@ -1,7 +1,6 @@
 // Copyright (c) FIRST and other WPILib contributors.
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
-
 package frc.robot;
 
 import edu.wpi.first.wpilibj.PowerDistribution;
@@ -16,6 +15,7 @@ import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
 public class Robot extends LoggedRobot {
+
     private RobotContainer robotContainer;
     private RobotState state;
     private int iteration = 0;
@@ -103,9 +103,12 @@ public class Robot extends LoggedRobot {
         Logger.recordMetadata("GitDate", BuildConstants.GIT_DATE);
         Logger.recordMetadata("GitBranch", BuildConstants.GIT_BRANCH);
         Logger.recordMetadata("GitDirty", switch (BuildConstants.DIRTY) {
-            case 0 -> "All changes committed";
-            case 1 -> "Uncommitted changes";
-            default -> "Unknown";
+            case 0 ->
+                "All changes committed";
+            case 1 ->
+                "Uncommitted changes";
+            default ->
+                "Unknown";
         });
     }
 
@@ -115,6 +118,7 @@ public class Robot extends LoggedRobot {
         if (robotContainer != null) {
             robotContainer.periodic();
         }
+        Options.periodic();
     }
 
     @Override

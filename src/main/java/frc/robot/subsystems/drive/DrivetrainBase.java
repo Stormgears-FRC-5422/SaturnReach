@@ -4,7 +4,6 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import frc.robot.Constants.Drive;
-import frc.robot.RobotState;
 import frc.utils.StormSubsystem;
 import org.littletonrobotics.junction.AutoLogOutput;
 
@@ -12,9 +11,8 @@ public abstract class DrivetrainBase extends StormSubsystem {
 
     public static boolean driveFlip = true;
     public static boolean fieldRelativeOn = true;
-    protected final RobotState m_state;
-    public double m_maxVelocityMetersPerSecond = 1;
-    public double m_maxAngularVelocityRadiansPerSecond = 1;
+    protected double m_maxVelocityMetersPerSecond = 1;
+    protected double m_maxAngularVelocityRadiansPerSecond = 1;
     protected double m_driveSpeedScale = 0;
     protected boolean m_fieldRelative = false;
 
@@ -23,7 +21,6 @@ public abstract class DrivetrainBase extends StormSubsystem {
 
     public DrivetrainBase() {
         setDriveSpeedScale(Drive.driveSpeedScale);
-        m_state = RobotState.getInstance();
         driveFlip = false;
         fieldRelativeOn = false;
     }

@@ -91,7 +91,7 @@ public class RobotContainer {
             HoldSwerveModuleStates holdCommand = new HoldSwerveModuleStates(drivetrain, MetersPerSecond.of(0.5), Degrees.of(90));
 
             drivetrain.setDefaultCommand(driveWithJoystick);
-            new Trigger(() -> joystick.holdSwerveState()).whileTrue(holdCommand);
+//            new Trigger(() -> joystick.holdSwerveState()).whileTrue(holdCommand);
         }
 
         console("[DONE] configureBindings");

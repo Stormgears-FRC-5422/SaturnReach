@@ -14,10 +14,8 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.LinearVelocity;
 import frc.robot.Constants;
-import frc.robot.RobotState;
-import frc.robot.elastic.options.DriveOptions;
+import frc.robot.Options.DriveOptions;
 import org.littletonrobotics.junction.Logger;
-
 import static edu.wpi.first.units.Units.*;
 
 public class SwerveModule {
@@ -44,7 +42,7 @@ public class SwerveModule {
     private final DriveOptions options;
 
     public SwerveModule(int index, ModuleConfig moduleConfig, PidConfig dPid, PidConfig sPid) {
-        options = RobotState.getInstance().getDriveOptions();
+        options = DriveOptions.create();
 
         this.index = index;
         config = moduleConfig;

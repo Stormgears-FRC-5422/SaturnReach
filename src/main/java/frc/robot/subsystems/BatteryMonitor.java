@@ -1,7 +1,6 @@
 // Copyright (c) FIRST and other WPILib contributors.
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
-
 package frc.robot.subsystems;
 
 import frc.robot.Constants;
@@ -13,12 +12,19 @@ import org.littletonrobotics.conduit.ConduitApi;
 import java.text.DecimalFormat;
 
 public class BatteryMonitor extends StormSubsystem {
+
     RobotState state;
     ConduitApi conduit;
     StatePeriod lastPeriod;
     double voltage;
     BatteryState batteryState;
     DecimalFormat df;
+
+    public enum BatteryState {
+        GOOD,
+        WARN,
+        BAD
+    }
 
     public BatteryMonitor() {
         state = RobotState.getInstance();
@@ -40,9 +46,9 @@ public class BatteryMonitor extends StormSubsystem {
                 // Prevent going into enabled mode if we had a low voltage the last time through
                 // Only in debug mode, so we just keep going during competition
                 if (batteryState == BatteryState.BAD
-                    && newPeriod != lastPeriod
-                    && Constants.Debug.debug
-                    && Constants.Power.autoKill) {
+                        && newPeriod != lastPeriod
+                        && Constants.Debug.debug
+                        && Constants.Power.autoKill) {
                     throw new BadBatteryException("The battery must be changed: " + df.format(voltage) + " Volts");
                 }
             default:
@@ -63,14 +69,10 @@ public class BatteryMonitor extends StormSubsystem {
         lastPeriod = newPeriod;
     }
 
-    public enum BatteryState {
-        GOOD, WARN, BAD
-    }
-
     public static class BadBatteryException extends RuntimeException {
+
         public BadBatteryException(String message) {
             super(message);
         }
     }
 }
-
