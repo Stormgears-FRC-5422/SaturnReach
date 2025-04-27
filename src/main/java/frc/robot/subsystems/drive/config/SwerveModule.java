@@ -1,5 +1,6 @@
 package frc.robot.subsystems.drive.config;
 
+import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.revrobotics.REVLibError;
@@ -54,11 +55,14 @@ public class SwerveModule {
         // CANCODER
         steerCANCoder = new CANcoder(config.encoderID);
 
-        CANcoderConfiguration canConfig = new CANcoderConfiguration();
-        Angle canOffset = Degrees.of(steerOffset);
-        canConfig.MagnetSensor.MagnetOffset = canOffset.in(Rotations);
-
-        steerCANCoder.getConfigurator().apply(canConfig);
+//        CANcoderConfiguration canConfig = new CANcoderConfiguration();
+//        Angle canOffset = Rotations.of(steerOffset);
+//        canConfig.MagnetSensor.MagnetOffset = canOffset.in(Rotations);
+//
+//        if (steerCANCoder.getConfigurator().apply(canConfig) != StatusCode.OK) {
+//            console("Error applying CANCoder configuration");
+//        }
+//        steerCANCoder.setPosition(steerCANCoder.getPosition().getValue().in(Rotations) - canOffset.in(Rotations));
         // /CANCODER
 
         // MOTORS
@@ -109,7 +113,7 @@ public class SwerveModule {
 
         steerController = steerMotor.getClosedLoopController();
         steerEncoder = steerMotor.getEncoder();
-        steerEncoder.setPosition(steerCANCoder.getPosition().getValue().in(Degrees));
+        steerEncoder.setPosition(steerCANCoder.getAbsolutePosition(true).getValue().in(Degrees));
         // /MOTORS: STEER MOTOR
         // /MOTORS
     }
@@ -136,7 +140,7 @@ public class SwerveModule {
         Logger.recordOutput("Mod " + name + "/targetDriveVelocity", tgtDriveVelocity);
         Logger.recordOutput("Mod " + name + "/drivePosition", driveEncoder.getPosition());
 
-        Logger.recordOutput("Mod " + name + "/CANCoder", canCoderAngle.in(Degrees));
+        Logger.recordOutput("Mod " + name + "/CANCoder", steerCANCoder.getAbsolutePosition().getValue().in(Degrees));
         Logger.recordOutput("Mod " + name + "/normCANCoder", normalizeDegrees(canCoderAngle.in(Degrees)));
 
         Logger.recordOutput("Mod " + name + "/steerAngle", rawSteerAngle);

@@ -52,7 +52,7 @@ public class BatteryMonitor extends StormSubsystem {
                     throw new BadBatteryException("The battery must be changed: " + df.format(voltage) + " Volts");
                 }
             default:
-                console("battery level: " + state.getBatteryState() + ", " + df.format(voltage) + " Volts", 1000);
+                console("battery level: " + state.getBatteryState() + ", " + df.format(voltage) + " Volts", 10000);
         }
 
         voltage = conduit.getPDPVoltage();

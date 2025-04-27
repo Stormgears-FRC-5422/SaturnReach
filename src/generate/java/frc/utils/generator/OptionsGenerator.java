@@ -13,8 +13,12 @@ public class OptionsGenerator {
 
         import frc.utils.configfile.OptionsController;
         import frc.utils.configfile.Option;
+        import frc.utils.configfile.OptionsRegistry;
 
         public final class Options {
+            public static void periodic() {
+                OptionsRegistry.periodic();
+            }
         """;
 
     private static String generateOptionsClass(String prefix, Map<String, PropItem> props) {
@@ -32,7 +36,9 @@ public class OptionsGenerator {
                         prop.getPropertyType().getJavaType(), name));
             }
         }
-        sb.append("\n");
+
+        // Add static instance field
+        sb.append("\n        private static " + className + " instance;\n\n");
 
         // Constructor
         sb.append(String.format("        public %s() {\n", className));
@@ -63,7 +69,18 @@ public class OptionsGenerator {
             }
         }
 
+        // Register with OptionsRegistry
+        sb.append("            OptionsRegistry.register(this);\n");
+        sb.append("        }\n\n");
+
+        // Add create() method
+        sb.append("        public static " + className + " create() {\n");
+        sb.append("            if (instance == null) {\n");
+        sb.append("                instance = new " + className + "();\n");
+        sb.append("            }\n");
+        sb.append("            return instance;\n");
         sb.append("        }\n");
+
         sb.append("    }\n");
 
         return sb.toString();
