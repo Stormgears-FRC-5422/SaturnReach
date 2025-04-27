@@ -16,6 +16,8 @@ public class Lights extends StormSubsystem {
     Color RED_COLOR = Color.kRed;
     Color BLUE_COLOR = Color.kBlue;
     Color ORANGE_COLOR = new Color(255, 32, 0);
+    Color PINK_COLOR = new Color(225,105,180);
+
 
     private AddressableLED addressableLED;
     private AddressableLEDBuffer addressableLEDBuffer;
@@ -44,12 +46,12 @@ public class Lights extends StormSubsystem {
         if (robotState.getIsShooting() || robotState.getIsIntaking()) {
             setRainbow();
         } else if (robotState.getIsOuttaking()) {
-            setSolid(BLUE_COLOR);
+            setSolid(PINK_COLOR);
         }
         else if (robotState.getUpperSensorTriggered()) {
             setSolid(ORANGE_COLOR);
         } else {
-            setSolid(RED_COLOR);
+            setSolid(BLUE_COLOR);
         }
 
         // Write the data to the LED strip
