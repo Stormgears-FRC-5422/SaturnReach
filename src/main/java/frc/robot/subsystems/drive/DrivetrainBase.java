@@ -9,6 +9,7 @@ import frc.utils.StormSubsystem;
 import org.littletonrobotics.junction.AutoLogOutput;
 
 public abstract class DrivetrainBase extends StormSubsystem {
+
     public static boolean driveFlip = true;
     public static boolean fieldRelativeOn = true;
     protected final RobotState m_state;
@@ -23,42 +24,43 @@ public abstract class DrivetrainBase extends StormSubsystem {
     public DrivetrainBase() {
         setDriveSpeedScale(Drive.driveSpeedScale);
         m_state = RobotState.getInstance();
-        setDriveFlip(false);
-        setFieldRelativeOn(false);
+        driveFlip = false;
+        fieldRelativeOn = false;
     }
 
-    protected void setDriveFlip(boolean flip) {
+    protected final void setDriveFlip(boolean flip) {
         driveFlip = flip;
     }
 
-    protected void setFieldRelativeOn(boolean flip) {
+    protected final void setFieldRelativeOn(boolean flip) {
         fieldRelativeOn = flip;
     }
 
-    protected void setMaxVelocities(double maxVelocityMetersPerSecond, double maxAngularVelocityRadiansPerSecond) {
+    protected final void setMaxVelocities(double maxVelocityMetersPerSecond, double maxAngularVelocityRadiansPerSecond) {
         m_maxVelocityMetersPerSecond = maxVelocityMetersPerSecond;
         m_maxAngularVelocityRadiansPerSecond = maxAngularVelocityRadiansPerSecond;
-        System.out.println("MaxDriveVelocity: " + m_maxVelocityMetersPerSecond);
-        System.out.println("MaxAngularVelocity: " + m_maxAngularVelocityRadiansPerSecond);
+        console("MaxDriveVelocity: " + m_maxVelocityMetersPerSecond);
+        console("MaxAngularVelocity: " + m_maxAngularVelocityRadiansPerSecond);
     }
 
-    public void setDriveSpeedScale(double scale) {
+    public final void setDriveSpeedScale(double scale) {
         m_driveSpeedScale = MathUtil.clamp(scale, 0, Drive.driveSpeedScale);
     }
 
     // Be careful scaling ChassisSpeeds. Need to scale X and Y the same or your robot will move in the wrong direction!
     public ChassisSpeeds scaleChassisSpeeds(ChassisSpeeds speeds, double scale) {
         return new ChassisSpeeds(scale * speeds.vxMetersPerSecond,
-            scale * speeds.vyMetersPerSecond,
-            scale * speeds.omegaRadiansPerSecond);
+                scale * speeds.vyMetersPerSecond,
+                scale * speeds.omegaRadiansPerSecond);
     }
 
     /**
-     * Command the robot to drive.
-     * This method expects real speeds in meters/second.
-     * Speed may be limited by speedScale and / or slew rate limiter
+     * Command the robot to drive. This method expects real speeds in
+     * meters/second. Speed may be limited by speedScale and / or slew rate
+     * limiter
      *
-     * @param speeds        Chassis speedsSwerveDriveConfiguration for the swerve, esp from joystick.
+     * @param speeds Chassis speedsSwerveDriveConfiguration for the swerve, esp
+     * from joystick.
      * @param fieldRelative True for field relative driving
      */
     public void drive(ChassisSpeeds speeds, boolean fieldRelative) {
@@ -67,7 +69,6 @@ public abstract class DrivetrainBase extends StormSubsystem {
 
     public void drive(ChassisSpeeds speeds, boolean fieldRelative, double speedScale) {
         m_fieldRelative = fieldRelative;
-        setFieldRelativeOn(true);
 
         if (fieldRelativeOn && fieldRelative) {
             Rotation2d rotation = getRotation();
@@ -79,18 +80,18 @@ public abstract class DrivetrainBase extends StormSubsystem {
     }
 
     /**
-     * Command the robot to drive, especially from Joystick
-     * This method expects units from -1 to 1, and then scales them to the max speeds
-     * You should call setMaxVelocities() before calling this method
+     * Command the robot to drive, especially from Joystick This method expects
+     * units from -1 to 1, and then scales them to the max speeds You should
+     * call setMaxVelocities() before calling this method
      *
-     * @param speeds        Chassis speeds, especially from joystick.
+     * @param speeds Chassis speeds, especially from joystick.
      * @param fieldRelative True for field relative driving
      */
     public void percentOutputDrive(ChassisSpeeds speeds, boolean fieldRelative) {
         drive(new ChassisSpeeds(speeds.vxMetersPerSecond * m_maxVelocityMetersPerSecond,
                 speeds.vyMetersPerSecond * m_maxVelocityMetersPerSecond,
                 speeds.omegaRadiansPerSecond * m_maxAngularVelocityRadiansPerSecond),
-            fieldRelative);
+                fieldRelative);
     }
 
     public Rotation2d getRotation() {

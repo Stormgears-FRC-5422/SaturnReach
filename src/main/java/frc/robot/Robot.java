@@ -112,6 +112,9 @@ public class Robot extends LoggedRobot {
     @Override
     public void robotPeriodic() {
         CommandScheduler.getInstance().run();
+        if (robotContainer != null) {
+            robotContainer.periodic();
+        }
     }
 
     @Override

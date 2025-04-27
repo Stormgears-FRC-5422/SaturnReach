@@ -1,14 +1,20 @@
 package frc.robot.subsystems.drive;
 
+import org.littletonrobotics.junction.Logger;
+
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.revrobotics.spark.SparkMax;
+
 import frc.robot.Constants.Drive;
 import frc.robot.subsystems.drive.config.SaturnXModuleConstants;
 import frc.robot.subsystems.drive.config.SwerveModule;
 import frc.robot.subsystems.drive.config.SwerveModuleGroup;
-import org.littletonrobotics.junction.Logger;
+
+import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
 
 public class DiagnosticSwerve extends DrivetrainBase {
+
     final double m_maxMotorVoltage = Drive.maxMotorVoltage;
 
     final SwerveModuleGroup moduleGroup;
@@ -17,19 +23,18 @@ public class DiagnosticSwerve extends DrivetrainBase {
     final SparkMax[] steerMotors;
     final CANcoder[] encoders;
 
-    final int FRONT_LEFT = SwerveModuleGroup.FRONT_LEFT;
-    final int FRONT_RIGHT = SwerveModuleGroup.FRONT_RIGHT;
-    final int BACK_RIGHT = SwerveModuleGroup.BACK_RIGHT;
-    final int BACK_LEFT = SwerveModuleGroup.BACK_LEFT;
+    final int FRONT_LEFT = SaturnXModuleConstants.FRONT_LEFT;
+    final int FRONT_RIGHT = SaturnXModuleConstants.FRONT_RIGHT;
+    final int BACK_RIGHT = SaturnXModuleConstants.BACK_RIGHT;
+    final int BACK_LEFT = SaturnXModuleConstants.BACK_LEFT;
 
-    public DiagnosticSwerve(SaturnXModuleConstants moduleConstants) {
+    public DiagnosticSwerve() {
         super();
 
-        // These are convenient lies - the units basically work
-        setMaxVelocities(m_maxMotorVoltage * Drive.driveSpeedScale,
-            m_maxMotorVoltage * Drive.driveSpeedScale);
+        moduleGroup = new SwerveModuleGroup();
+        setMaxVelocities(moduleGroup.getMaxLinearVelocity().in(MetersPerSecond),
+                moduleGroup.getMaxAngularVelocity().in(RadiansPerSecond));
 
-        moduleGroup = new SwerveModuleGroup(moduleConstants);
         driveMotors = moduleGroup.getDriveMotors();
         steerMotors = moduleGroup.getSteerMotors();
         encoders = moduleGroup.getEncoders();
@@ -41,12 +46,9 @@ public class DiagnosticSwerve extends DrivetrainBase {
         double driveSpeed = m_chassisSpeeds.vxMetersPerSecond;
         double steerSpeed = m_chassisSpeeds.omegaRadiansPerSecond;
 
-        for (SparkMax m : driveMotors) {
-            m.set(driveSpeed);
-        }
-
-        for (SparkMax m : steerMotors) {
-            m.set(steerSpeed);
+        for (SwerveModule m : modules) {
+            m.driveMotorSet(driveSpeed);
+            m.steerMotorSet(steerSpeed);
         }
 
         Logger.recordOutput("fl steer", steerMotors[FRONT_LEFT].getEncoder().getPosition());

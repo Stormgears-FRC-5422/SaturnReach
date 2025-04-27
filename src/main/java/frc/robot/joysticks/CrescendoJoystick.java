@@ -3,6 +3,7 @@ package frc.robot.joysticks;
 import frc.utils.joysticks.StormLogitechController;
 
 public class CrescendoJoystick {
+
     StormLogitechController controller;
 
     public CrescendoJoystick(int port) {
@@ -31,5 +32,9 @@ public class CrescendoJoystick {
 
     public double getSlider() {
         return controller.getSliderAxis();
+    }
+
+    public boolean holdSwerveState() {
+        return controller.getRawButton(7);
     }
 }

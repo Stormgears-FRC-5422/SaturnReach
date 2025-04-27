@@ -1,7 +1,5 @@
 package frc.robot.subsystems.drive;
 
-import frc.robot.subsystems.drive.config.SaturnXModuleConstants;
-
 public class DrivetrainFactory {
     protected static DrivetrainBase instance;
 
@@ -12,8 +10,8 @@ public class DrivetrainFactory {
                 System.out.println("Ignoring drive subtype " + driveSubtype);
             }
             switch (driveType.toLowerCase()) {
-                case "diagnosticswerve" -> instance = new DiagnosticSwerve(new SaturnXModuleConstants());
-                case "basicswerve" -> instance = new BasicSwerve(new SaturnXModuleConstants());
+                case "diagnosticswerve" -> instance = new DiagnosticSwerve();
+                case "basicswerve" -> instance = new BasicSwerve();
                 default -> throw new IllegalDriveTypeException("Illegal Drive Type: " + driveType);
             }
         }

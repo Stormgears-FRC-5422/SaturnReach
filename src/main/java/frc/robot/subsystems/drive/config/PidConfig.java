@@ -7,8 +7,9 @@ package frc.robot.subsystems.drive.config;/*
 
 
 // This class was shamelessly stolen from the Slot0Configs class from CTRE. Simplified for the outreach robot
-
 public class PidConfig {
+
+    private boolean isDirty = false;
     public double kP = 0;
     public double kI = 0;
     public double kD = 0;
@@ -18,17 +19,31 @@ public class PidConfig {
     public double kMin = 0;
     public double kMax = 0;
 
+    public void setDirty() {
+        isDirty = true;
+    }
+
+    public void clearDirty() {
+        isDirty = false;
+    }
+
+    public boolean isDirty() {
+        return isDirty;
+    }
+
     public static PidConfig from(PidConfig value) {
-        return new PidConfig() {{
-            kP = value.kP;
-            kI = value.kI;
-            kD = value.kD;
-            kS = value.kS;
-            kV = value.kV;
-            kA = value.kA;
-            kMin = value.kMin;
-            kMax = value.kMax;
-        }};
+        return new PidConfig() {
+            {
+                kP = value.kP;
+                kI = value.kI;
+                kD = value.kD;
+                kS = value.kS;
+                kV = value.kV;
+                kA = value.kA;
+                kMin = value.kMin;
+                kMax = value.kMax;
+            }
+        };
     }
 
     public PidConfig withKP(double newKP) {
@@ -81,4 +96,3 @@ public class PidConfig {
         return ss;
     }
 }
-

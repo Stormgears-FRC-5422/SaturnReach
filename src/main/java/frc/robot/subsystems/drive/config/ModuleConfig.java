@@ -3,6 +3,7 @@ package frc.robot.subsystems.drive.config;
 import edu.wpi.first.math.geometry.Translation2d;
 
 public class ModuleConfig {
+    private boolean isDirty = false;
     public int encoderID = 0;
     public int driveID = 0;
     public int steerID = 0;
@@ -17,6 +18,18 @@ public class ModuleConfig {
     public boolean invertEncoder = false;
     public Translation2d offset = new Translation2d();
     public String name = "module";
+
+    public void setDirty() {
+        isDirty = true;
+    }
+
+    public void clearDirty() {
+        isDirty = false;
+    }
+
+    public boolean isDirty() {
+        return isDirty;
+    }
 
     public static ModuleConfig from(ModuleConfig value) {
         return new ModuleConfig() {{

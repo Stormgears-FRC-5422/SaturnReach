@@ -1,12 +1,15 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.RobotBase;
+import frc.robot.elastic.DriveOptions;
 import frc.robot.subsystems.BatteryMonitor.BatteryState;
 import frc.robot.subsystems.Shooter.ShooterState;
 
 public class RobotState {
+
     private static RobotState instance;
     private final StateSimMode stateSimMode;
+    private final DriveOptions driveOptions;
     boolean upperSensorTriggered;
     private BatteryState batteryState;
     private ShooterState shooterState;
@@ -26,13 +29,20 @@ public class RobotState {
         }
 
         batteryState = BatteryState.GOOD; // let the battery monitor tell us its bad
+        driveOptions = new DriveOptions();
     }
 
     public static RobotState getInstance() {
-        if (instance != null) return instance;
+        if (instance != null) {
+            return instance;
+        }
 
         instance = new RobotState();
         return instance;
+    }
+
+    public DriveOptions getDriveOptions() {
+        return driveOptions;
     }
 
     public StateSimMode getSimMode() {

@@ -16,7 +16,8 @@ import java.util.function.DoubleSupplier;
 import static frc.robot.subsystems.Shooter.Direction.FORWARD;
 import static frc.robot.subsystems.Shooter.Direction.REVERSE;
 
-public class Shooter extends StormSubsystem {
+public final class Shooter extends StormSubsystem {
+
     private final RobotState robotState;
     private final SparkMaxConfig upperLeaderConfig;
     private final SparkMaxConfig lowerConfig;
@@ -44,9 +45,9 @@ public class Shooter extends StormSubsystem {
         console("upperGearRatio = " + upperGearRatio);
         console("upperDiameter =  " + upperDiameter);
 
-        lowerSpeedScale = freeSpeedScale *
-            (lowerGearRatio/upperGearRatio) *
-            (upperDiameter/lowerDiameter);
+        lowerSpeedScale = freeSpeedScale
+                * (lowerGearRatio / upperGearRatio)
+                * (upperDiameter / lowerDiameter);
 
         console("lower:upper speed scale = " + lowerSpeedScale);
         upperLeaderMotor = new SparkMax(Constants.Shooter.upperLeaderID, SparkLowLevel.MotorType.kBrushless);
@@ -59,24 +60,24 @@ public class Shooter extends StormSubsystem {
         SparkMaxConfig upperFollowerConfig = new SparkMaxConfig();
 
         globalConfig.smartCurrentLimit(Constants.SparkConstants.CurrentLimit)
-            .voltageCompensation(Constants.SparkConstants.NominalVoltage)
-            .openLoopRampRate(Constants.Shooter.openLoopRampRate);
+                .voltageCompensation(Constants.SparkConstants.NominalVoltage)
+                .openLoopRampRate(Constants.Shooter.openLoopRampRate);
 
         upperLeaderConfig.apply(globalConfig)
-            .inverted(Constants.Shooter.invertLeader);
+                .inverted(Constants.Shooter.invertLeader);
 
         upperFollowerConfig.apply(globalConfig).follow(upperLeaderMotor, true);
 
         lowerConfig.apply(globalConfig)
-            .inverted(Constants.Shooter.invertIntake);
+                .inverted(Constants.Shooter.invertIntake);
 
         upperLeaderMotor.configure(upperLeaderConfig,
-            SparkBase.ResetMode.kResetSafeParameters,
-            SparkBase.PersistMode.kPersistParameters);
+                SparkBase.ResetMode.kResetSafeParameters,
+                SparkBase.PersistMode.kPersistParameters);
 
         upperFollowerMotor.configure(upperFollowerConfig,
-            SparkBase.ResetMode.kResetSafeParameters,
-            SparkBase.PersistMode.kPersistParameters);
+                SparkBase.ResetMode.kResetSafeParameters,
+                SparkBase.PersistMode.kPersistParameters);
 
         slider = joystick::getSlider;
         robotState = RobotState.getInstance();
@@ -109,8 +110,8 @@ public class Shooter extends StormSubsystem {
                 setLimitSwitch(FORWARD, true);
                 setIdleModeAll(IdleMode.kBrake);
                 setMotorSpeeds(FORWARD,
-                    Constants.Shooter.intakeMaxSpeed,
-                    0);
+                        Constants.Shooter.intakeMaxSpeed,
+                        0);
             }
 
             case SPEAKER_SHOOTING -> {
@@ -118,8 +119,8 @@ public class Shooter extends StormSubsystem {
                 useSlider = true;
                 setLimitSwitch(FORWARD, false);
                 setMotorSpeeds(FORWARD,
-                    lowerSpeedScale * Constants.Shooter.shootMaxSpeed,
-                    Constants.Shooter.shootMaxSpeed);
+                        lowerSpeedScale * Constants.Shooter.shootMaxSpeed,
+                        Constants.Shooter.shootMaxSpeed);
             }
 
             case OUTTAKE -> {
@@ -127,8 +128,8 @@ public class Shooter extends StormSubsystem {
                 setLimitSwitch(REVERSE, false);
                 setIdleModeAll(IdleMode.kCoast);
                 setMotorSpeeds(REVERSE,
-                    lowerSpeedScale * Constants.Shooter.outtakeMaxSpeed,
-                    Constants.Shooter.outtakeMaxSpeed);
+                        lowerSpeedScale * Constants.Shooter.outtakeMaxSpeed,
+                        Constants.Shooter.outtakeMaxSpeed);
             }
 
             case STAGED_FOR_SHOOTING -> {
@@ -137,7 +138,8 @@ public class Shooter extends StormSubsystem {
                 setMotorSpeeds(FORWARD, 0, 0);
             }
 
-            default -> System.out.println("invalid state");
+            default ->
+                System.out.println("invalid state");
         }
     }
 
@@ -146,10 +148,10 @@ public class Shooter extends StormSubsystem {
         lowerConfig.idleMode(mode);
 
         upperLeaderMotor.configure(upperLeaderConfig, SparkBase.ResetMode.kNoResetSafeParameters,
-            SparkBase.PersistMode.kNoPersistParameters);
+                SparkBase.PersistMode.kNoPersistParameters);
 
         lowerMotor.configure(lowerConfig, SparkBase.ResetMode.kNoResetSafeParameters,
-            SparkBase.PersistMode.kNoPersistParameters);
+                SparkBase.PersistMode.kNoPersistParameters);
     }
 
     private void setLimitSwitch(Direction d, boolean enabled) {
@@ -163,7 +165,7 @@ public class Shooter extends StormSubsystem {
         }
 
         lowerMotor.configure(lowerConfig, SparkBase.ResetMode.kNoResetSafeParameters,
-            SparkBase.PersistMode.kNoPersistParameters);
+                SparkBase.PersistMode.kNoPersistParameters);
     }
 
     public void setMotorSpeeds(Direction d, double lowerSpeed, double upperSpeed) {

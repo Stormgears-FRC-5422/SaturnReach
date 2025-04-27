@@ -1,66 +1,80 @@
 package frc.robot.subsystems.drive;
 
-import com.ctre.phoenix6.hardware.CANcoder;
-import com.revrobotics.spark.SparkMax;
-
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import frc.robot.Constants.Drive;
-import frc.robot.subsystems.drive.config.SaturnXModuleConstants;
-import frc.robot.subsystems.drive.config.SwerveModule;
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.LinearVelocity;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.RobotState;
+import frc.robot.elastic.DriveOptions;
 import frc.robot.subsystems.drive.config.SwerveModuleGroup;
+import frc.robot.subsystems.drive.config.SwerveModule;
+import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.Radians;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
 
 public class BasicSwerve extends DrivetrainBase {
-    final double m_maxMotorVoltage = Drive.maxMotorVoltage;
 
     final SwerveModuleGroup moduleGroup;
     final SwerveModule[] modules;
+    final SwerveDriveKinematics kinematics;
+    private final DriveOptions options;
 
-    final int FRONT_LEFT = SwerveModuleGroup.FRONT_LEFT;
-    final int FRONT_RIGHT = SwerveModuleGroup.FRONT_RIGHT;
-    final int BACK_RIGHT = SwerveModuleGroup.BACK_RIGHT;
-    final int BACK_LEFT = SwerveModuleGroup.BACK_LEFT;
-
-//    // Creating my kinematics object using the module locations
-//    SwerveDriveKinematics m_kinematics;
-
-    public BasicSwerve(SaturnXModuleConstants moduleConstants) {
+    public BasicSwerve() {
         super();
 
-        // These are convenient lies - the units basically work
-        setMaxVelocities(m_maxMotorVoltage * Drive.driveSpeedScale,
-                m_maxMotorVoltage * Drive.driveSpeedScale);
+        options = RobotState.getInstance().getDriveOptions();
 
-        moduleGroup = new SwerveModuleGroup(moduleConstants);
+        moduleGroup = new SwerveModuleGroup();
+        setMaxVelocities(moduleGroup.getMaxLinearVelocity().in(MetersPerSecond),
+                moduleGroup.getMaxAngularVelocity().in(RadiansPerSecond));
+
+        kinematics = new SwerveDriveKinematics(moduleGroup.getModuleTranslations());
         modules = moduleGroup.getModules();
 
-        // Create this list explicitly so we can control the order and keep FRONT_LEFT,
-        // etc. honest.
-        Translation2d[] moduleTranslations = new Translation2d[4];
-        moduleTranslations[FRONT_LEFT] = moduleConstants.flModuleConfig.offset;
-        moduleTranslations[FRONT_RIGHT] = moduleConstants.frModuleConfig.offset;
-        moduleTranslations[BACK_RIGHT] = moduleConstants.brModuleConfig.offset;
-        moduleTranslations[BACK_LEFT] = moduleConstants.blModuleConfig.offset;
-
-        SwerveDriveKinematics m_kinematics = new SwerveDriveKinematics(moduleTranslations);
+        SmartDashboard.putData("Swerve Drive", builder -> {
+            builder.setSmartDashboardType("SwerveDrive");
+            builder.addDoubleProperty("Robot Angle", () -> 45.0, null);
+            for (SwerveModule m : modules) {
+                builder.addDoubleProperty(m.name + " Angle", m::getSteerAngle, null);
+                builder.addDoubleProperty(m.name + " Velocity", m::getDriveVelocity, null);
+            }
+        });
     }
-
 
     @Override
     public void periodic() {
-        console("driving with values "+ m_chassisSpeeds, 25);
-        double steerpos = Math.atan2(m_chassisSpeeds.vxMetersPerSecond, m_chassisSpeeds.vyMetersPerSecond);
+        super.periodic();
+        options.periodic();
+        moduleGroup.periodic();
+
+        if (options.allowRotation.get()) {
+            SwerveModuleState[] targetStates = kinematics.toSwerveModuleStates(m_chassisSpeeds);
+            setModuleStates(targetStates);
+        } else {
+            driveWithoutRotation();
+        }
+    }
+
+    public void setModuleStates(SwerveModuleState[] states) {
+        moduleGroup.setSwerveModuleStates(states);
+    }
+
+    private void driveWithoutRotation() {
+        LinearVelocity speed = MetersPerSecond.of(
+                Math.hypot(m_chassisSpeeds.vxMetersPerSecond, m_chassisSpeeds.vyMetersPerSecond));
+        Angle angle = Radians.of(
+                Math.atan2(m_chassisSpeeds.vyMetersPerSecond, m_chassisSpeeds.vxMetersPerSecond));
 
         for (SwerveModule m : modules) {
-            double velocity = Math.hypot(m_chassisSpeeds.vxMetersPerSecond, m_chassisSpeeds.vyMetersPerSecond);
-            m.setDriveVelocity(velocity);
-            if (velocity > 0.05) {
-                m.setSteerAngle(new Rotation2d(steerpos));
-            }
-            m.telemetry();
-       }
+            m.setDriveVelocity(speed);
+            m.setSteerAngle(angle);
+        }
+    }
+
+    public void stop() {
+        moduleGroup.stop();
+        this.drive(new ChassisSpeeds(), false);
     }
 }
