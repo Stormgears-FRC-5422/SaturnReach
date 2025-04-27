@@ -61,10 +61,12 @@ public class SwerveModuleGroup {
         // We need all the modules to see the dirty setting, so here we mark that as done
         if (drivePidConfig.isDirty()) {
             drivePidConfig.clearDirty();
+            System.out.println(drivePidConfig);
         }
 
         if (steerPidConfig.isDirty()) {
             steerPidConfig.clearDirty();
+            System.out.println(steerPidConfig);
         }
     }
 

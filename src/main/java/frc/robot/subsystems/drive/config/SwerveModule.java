@@ -81,7 +81,8 @@ public class SwerveModule {
 
         driveConfig.apply(driveEncoderConfig);
 
-        dPid.kV = Constants.SparkConstants.NominalVoltage / getMaxLinearVelocity().in(MetersPerSecond);
+        dPid.kV = 1.0 / getMaxLinearVelocity().in(MetersPerSecond);
+
         driveConfig.closedLoop
                 .p(dPid.kP).i(dPid.kI).d(dPid.kD)
                 .velocityFF(dPid.kV).outputRange(dPid.kMin, dPid.kMax);

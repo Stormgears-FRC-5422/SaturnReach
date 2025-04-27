@@ -40,7 +40,7 @@ public class HoldSwerveModuleStates extends StormCommand {
     @Override
     public void execute() {
         super.execute();
-        swerveDrive.setModuleStates(targetStates);
+        swerveDrive.setTargetModuleStates(targetStates);
     }
 
     @Override

@@ -44,9 +44,9 @@ public class Lights extends StormSubsystem {
         this.batteryPulse = (robotState.getBatteryState() != BatteryState.GOOD);
 
         if (robotState.getIsShooting() || robotState.getIsIntaking()) {
-            setRainbow();
+            setRainbow(true);
         } else if (robotState.getIsOuttaking()) {
-            setSolid(PINK_COLOR);
+            setRainbow(false);
         }
         else if (robotState.getUpperSensorTriggered()) {
             setSolid(ORANGE_COLOR);
@@ -70,10 +70,13 @@ public class Lights extends StormSubsystem {
         finalPattern.applyTo(view);
     }
 
-    public void setRainbow() {
+    public void setRainbow(boolean forward) {
         LEDPattern rainbow = LEDPattern.rainbow(255, 128);
         Distance kLedSpacing = Meters.of(1 / 120.0);
         LEDPattern scrollingRainbow = rainbow.scrollAtAbsoluteSpeed(MetersPerSecond.of(0.45), kLedSpacing);
+        if (!forward)
+            scrollingRainbow = scrollingRainbow.reversed();
+
         patternApplyTo(scrollingRainbow, m_left);
         patternApplyTo(scrollingRainbow, m_right);
     }

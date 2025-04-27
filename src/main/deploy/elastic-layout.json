@@ -9,7 +9,7 @@
           {
             "title": "List Layout",
             "x": 0.0,
-            "y": 0.0,
+            "y": 128.0,
             "width": 256.0,
             "height": 384.0,
             "type": "List Layout",
@@ -54,116 +54,6 @@
                   "topic": "/Elastic/Drive Options/cosineOptimize",
                   "period": 0.06,
                   "data_type": "boolean"
-                }
-              }
-            ]
-          },
-          {
-            "title": "Steer",
-            "x": 896.0,
-            "y": 256.0,
-            "width": 256.0,
-            "height": 384.0,
-            "type": "List Layout",
-            "properties": {
-              "label_position": "TOP"
-            },
-            "children": [
-              {
-                "title": "kP",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/Elastic/PID Tuning/Steer/kP",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": true
-                }
-              },
-              {
-                "title": "kI",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/Elastic/PID Tuning/Steer/kI",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": true
-                }
-              },
-              {
-                "title": "kD",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/Elastic/PID Tuning/Steer/kD",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": true
-                }
-              }
-            ]
-          },
-          {
-            "title": "Drive",
-            "x": 256.0,
-            "y": 256.0,
-            "width": 256.0,
-            "height": 384.0,
-            "type": "List Layout",
-            "properties": {
-              "label_position": "TOP"
-            },
-            "children": [
-              {
-                "title": "kP",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/Elastic/PID Tuning/Drive/kP",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": true
-                }
-              },
-              {
-                "title": "kI",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/Elastic/PID Tuning/Drive/kI",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": true
-                }
-              },
-              {
-                "title": "kD",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/Elastic/PID Tuning/Drive/kD",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": true
                 }
               }
             ]

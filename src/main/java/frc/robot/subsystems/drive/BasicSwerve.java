@@ -1,5 +1,6 @@
 package frc.robot.subsystems.drive;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -9,9 +10,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Options.DriveOptions;
 import frc.robot.subsystems.drive.config.SwerveModuleGroup;
 import frc.robot.subsystems.drive.config.SwerveModule;
-import static edu.wpi.first.units.Units.MetersPerSecond;
-import static edu.wpi.first.units.Units.Radians;
-import static edu.wpi.first.units.Units.RadiansPerSecond;
+import com.studica.frc.AHRS;
+
+import static edu.wpi.first.units.Units.*;
 
 public class BasicSwerve extends DrivetrainBase {
 
@@ -19,9 +20,13 @@ public class BasicSwerve extends DrivetrainBase {
     final SwerveModule[] modules;
     final SwerveDriveKinematics kinematics;
     private final DriveOptions options;
+    private final AHRS navx;
 
     public BasicSwerve() {
         super();
+
+        navx = new AHRS(AHRS.NavXComType.kMXP_SPI, AHRS.NavXUpdateRate.k50Hz);
+        navx.zeroYaw();
 
         options = DriveOptions.create();
 
@@ -34,7 +39,7 @@ public class BasicSwerve extends DrivetrainBase {
 
         SmartDashboard.putData("Swerve Drive", builder -> {
             builder.setSmartDashboardType("SwerveDrive");
-            builder.addDoubleProperty("Robot Angle", () -> 45.0, null);
+            builder.addDoubleProperty("Robot Angle", () -> -navx.getYaw(), null);
             for (SwerveModule m : modules) {
                 builder.addDoubleProperty(m.name + " Angle", m::getSteerAngle, null);
                 builder.addDoubleProperty(m.name + " Velocity", m::getDriveVelocity, null);
@@ -47,8 +52,10 @@ public class BasicSwerve extends DrivetrainBase {
         super.periodic();
         moduleGroup.periodic();
 
+//        console("m_chassisSpeeds = " + m_chassisSpeeds, 25);
         if (options.allowRotation.get()) {
             SwerveModuleState[] targetStates = kinematics.toSwerveModuleStates(m_chassisSpeeds);
+//            console("targetStates = " + Arrays.toString(targetStates), 250);
             setModuleStates(targetStates);
         } else {
             driveWithoutRotation();
@@ -57,6 +64,10 @@ public class BasicSwerve extends DrivetrainBase {
 
     public void setModuleStates(SwerveModuleState[] states) {
         moduleGroup.setSwerveModuleStates(states);
+    }
+
+    public void setTargetModuleStates(SwerveModuleState[] states) {
+        m_chassisSpeeds = kinematics.toChassisSpeeds(states);
     }
 
     private void driveWithoutRotation() {
@@ -69,6 +80,11 @@ public class BasicSwerve extends DrivetrainBase {
             m.setDriveVelocity(speed);
             m.setSteerAngle(angle);
         }
+    }
+
+    @Override
+    public Rotation2d getRotation() {
+        return new Rotation2d(Degrees.of(-navx.getAngle()));
     }
 
     public void stop() {
