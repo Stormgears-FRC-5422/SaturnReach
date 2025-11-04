@@ -52,17 +52,9 @@ public class SwerveModule {
         name = config.name;
         steerOffset = config.encoderOffset;
 
-        // CANCODER
+        // CANCODER - read only!
         steerCANCoder = new CANcoder(config.encoderID);
-
-//        CANcoderConfiguration canConfig = new CANcoderConfiguration();
-//        Angle canOffset = Rotations.of(steerOffset);
-//        canConfig.MagnetSensor.MagnetOffset = canOffset.in(Rotations);
-//
-//        if (steerCANCoder.getConfigurator().apply(canConfig) != StatusCode.OK) {
-//            console("Error applying CANCoder configuration");
-//        }
-//        steerCANCoder.setPosition(steerCANCoder.getPosition().getValue().in(Rotations) - canOffset.in(Rotations));
+        Angle canOffset = Degrees.of(steerOffset);
         // /CANCODER
 
         // MOTORS
@@ -114,7 +106,9 @@ public class SwerveModule {
 
         steerController = steerMotor.getClosedLoopController();
         steerEncoder = steerMotor.getEncoder();
-        steerEncoder.setPosition(steerCANCoder.getAbsolutePosition(true).getValue().in(Degrees));
+
+        steerEncoder.setPosition(steerCANCoder.getAbsolutePosition().getValue().in(Degrees) - canOffset.in(Degrees));
+
         // /MOTORS: STEER MOTOR
         // /MOTORS
     }
@@ -142,7 +136,8 @@ public class SwerveModule {
         Logger.recordOutput("Mod " + name + "/targetDriveVelocity", tgtDriveVelocity);
         Logger.recordOutput("Mod " + name + "/drivePosition", driveEncoder.getPosition());
 
-        Logger.recordOutput("Mod " + name + "/CANCoder", steerCANCoder.getAbsolutePosition().getValue().in(Degrees));
+        Logger.recordOutput("Mod " + name + "/CANCoder_angle", canCoderAngle.in(Degrees));
+        Logger.recordOutput("Mod " + name + "/CANCoder_abs_pos", steerCANCoder.getAbsolutePosition().getValue().in(Degrees));
         Logger.recordOutput("Mod " + name + "/normCANCoder", normalizeDegrees(canCoderAngle.in(Degrees)));
 
         Logger.recordOutput("Mod " + name + "/steerAngle", rawSteerAngle);
