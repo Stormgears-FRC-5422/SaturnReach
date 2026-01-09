@@ -6,11 +6,12 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.LinearVelocity;
+import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Options.DriveOptions;
 import frc.robot.subsystems.drive.config.SwerveModuleGroup;
 import frc.robot.subsystems.drive.config.SwerveModule;
-import com.studica.frc.AHRS;
+import com.kauailabs.navx.frc.AHRS;
 
 import static edu.wpi.first.units.Units.*;
 
@@ -25,7 +26,7 @@ public class BasicSwerve extends DrivetrainBase {
     public BasicSwerve() {
         super();
 
-        navx = new AHRS(AHRS.NavXComType.kMXP_SPI, AHRS.NavXUpdateRate.k50Hz);
+    navx = new AHRS(SPI.Port.kMXP, (byte) 50);
         navx.zeroYaw();
 
         options = DriveOptions.create();

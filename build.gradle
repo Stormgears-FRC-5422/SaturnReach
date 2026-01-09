@@ -1,8 +1,12 @@
 plugins {
     id "java"
-    id "edu.wpi.first.GradleRIO" version "2025.3.2"
-    id "com.peterabeles.gversion" version "1.10"
-    id "io.freefair.lombok" version "8.4"
+    id "edu.wpi.first.GradleRIO" version "2026.1.1-beta-1"
+}
+
+// Add REV Robotics Maven repository for SparkMax artifacts
+repositories {
+    // REV Robotics Maven repository (use root URL - vendordep metadata references this)
+    maven { url 'https://maven.revrobotics.com' }
 }
 
 java {
@@ -29,18 +33,6 @@ deploy {
                 // getTargetTypeClass is a shortcut to get the class type using a string
 
                 frcJava(getArtifactTypeClass('FRCJavaArtifact')) {
-		    // For Visual VM
-                    jvmArgs.add("-Dcom.sun.management.jmxremote=true")
-                    jvmArgs.add("-Dcom.sun.management.jmxremote.port=1198")
-                    jvmArgs.add("-Dcom.sun.management.jmxremote.local.only=false")
-                    jvmArgs.add("-Dcom.sun.management.jmxremote.ssl=false")
-                    jvmArgs.add("-Dcom.sun.management.jmxremote.authenticate=false")
-                    jvmArgs.add("-Djava.rmi.server.hostname=10.54.22.2")
-
-		    // From AKit template
-                    jvmArgs.add("-XX:+UnlockExperimentalVMOptions")
-                    jvmArgs.add("-XX:GCTimeRatio=5")
-                    jvmArgs.add("-XX:MaxGCPauseMillis=50")
                 }
 
                 // Static files artifact
@@ -57,16 +49,12 @@ deploy {
 
 def deployArtifact = deploy.targets.roborio.artifacts.frcJava
 
-// Set to true to use debug for JNI.
+// Set to true to use debug for all targets including JNI, which will drastically impact
+// performance.
 wpi.java.debugJni = false
 
 // Set this to true to enable desktop support.
-def includeDesktopSupport = true
-// Configuration for AdvantageKit
-task(replayWatch, type: JavaExec) {
-    mainClass = "org.littletonrobotics.junction.ReplayWatch"
-    classpath = sourceSets.main.runtimeClasspath
-}
+def includeDesktopSupport = false
 
 // Defining my dependencies. In this case, WPILib (+ friends), and vendor libraries.
 // Also defines JUnit 5.
@@ -74,6 +62,19 @@ dependencies {
     annotationProcessor wpi.java.deps.wpilibAnnotations()
     implementation wpi.java.deps.wpilib()
     implementation wpi.java.vendor.java()
+
+    // Lombok for annotations used in some utility classes
+    compileOnly 'org.projectlombok:lombok:1.18.26'
+    annotationProcessor 'org.projectlombok:lombok:1.18.26'
+
+    // Vendor libraries: CTRE Phoenix 6 and AdvantageKit (junction/AdvantageKit)
+    implementation 'com.ctre.phoenix6:wpiapi-java:26.0.0-beta-1'
+    implementation 'org.littletonrobotics.akit:akit-java:26.0.0-beta-1'
+
+    // REV Robotics Java library (REVLib) - provides Spark/REV APIs
+    // Use the vendordep artifact/version present in vendordeps/REVLib.json
+    implementation 'com.revrobotics.frc:REVLib-java:2026.0.0-beta-1'
+
 
     roborioDebug wpi.java.deps.wpilibJniDebug(wpi.platforms.roborio)
     roborioDebug wpi.java.vendor.jniDebug(wpi.platforms.roborio)
@@ -91,10 +92,6 @@ dependencies {
 
     testImplementation 'org.junit.jupiter:junit-jupiter:5.10.1'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-
-    // Add the AdvantageKit annotation processor
-    def akitJson = new groovy.json.JsonSlurper().parseText(new File(projectDir, "vendordeps/AdvantageKit.json").text)
-    annotationProcessor "org.littletonrobotics.akit:akit-autolog:$akitJson.version"
 }
 
 test {
@@ -103,11 +100,6 @@ test {
 }
 
 // Simulation configuration (e.g. environment variables).
-//
-// The sim GUI is *disabled* by default to support running
-// AdvantageKit log replay from the command line. Set the
-// value to "true" to enable the sim GUI by default (this
-// is the standard WPILib behavior).
 wpi.sim.addGui().defaultEnabled = true
 wpi.sim.addDriverstation()
 
@@ -129,55 +121,4 @@ wpi.java.configureTestTasks(test)
 // Configure string concat to always inline compile
 tasks.withType(JavaCompile) {
     options.compilerArgs.add '-XDstringConcat=inline'
-}
-// Create version file
-project.compileJava.dependsOn(createVersionFile)
-gversion {
-    srcDir = "src/main/java/"
-    classPackage = "frc.robot"
-    className = "BuildConstants"
-    dateFormat = "yyyy-MM-dd HH:mm:ss z"
-    timeZone = "America/New_York"
-    indent = "  "
-}
-// Additions to handle code generation for properties
-// A different source set is required to decouple compilation of the generator from the rest of the code.
-// The generator needs to be compiled and run before the rest of the code is compiled (since generated code is
-// compiled with the rest of the robot
-sourceSets {
-    generate {
-        java {
-            srcDir 'src/generate/java'
-        }
-    }
-}
-task compileGeneratorCode(type: JavaCompile) {
-    source = sourceSets.generate.java
-    classpath = configurations.runtimeClasspath
-    destinationDir = file("$buildDir/myGeneratorCode")
-    outputs.dir destinationDir
-}
-// Task to run the generator
-task generateCode(dependsOn: compileGeneratorCode) {
-    def propertyFileDir = 'src/main/deploy'
-    def outputFileName = 'src/main/java/frc/robot/Constants.java'
-    // Dependency on the generated java code being up-to-date
-    inputs.dir(compileGeneratorCode.destinationDir)
-
-    inputs.dir file("$buildDir/myGeneratorCode") as Object
-    // Dependency on the *.properties files we care about
-    inputs.files fileTree(dir: propertyFileDir, include: '**/*.properties')
-    // Has the output file been modified? Regenerate it!
-    outputs.file outputFileName
-    doLast {
-        javaexec {
-            classpath = files(compileGeneratorCode.destinationDirectory, sourceSets.main.runtimeClasspath)
-            main = 'frc.utils.generator.ConstantGenerator'
-            args = [propertyFileDir, outputFileName]
-        }
-    }
-}
-// build task depends on both compileJava and generateCode
-tasks.named('compileJava').configure {
-    dependsOn generateCode
 }
