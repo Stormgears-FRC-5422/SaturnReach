@@ -8,6 +8,7 @@ import frc.robot.RobotState;
 import frc.robot.RobotState.StatePeriod;
 import frc.utils.StormSubsystem;
 import org.littletonrobotics.conduit.ConduitApi;
+import org.littletonrobotics.junction.Logger;
 
 import java.text.DecimalFormat;
 
@@ -57,6 +58,10 @@ public class BatteryMonitor extends StormSubsystem {
 
         voltage = conduit.getPDPVoltage();
 
+        if (Constants.Toggles.useAdvantageKit) {
+            Logger.recordOutput("Power/BatteryVoltage", voltage);
+        }
+
         if (voltage > Constants.Power.warnLimit) {
             batteryState = BatteryState.GOOD;
         } else if (voltage > Constants.Power.shutoffLimit) {
@@ -66,6 +71,11 @@ public class BatteryMonitor extends StormSubsystem {
         }
 
         state.setBatteryState(batteryState);
+
+        if (Constants.Toggles.useAdvantageKit) {
+            Logger.recordOutput("Power/BatteryStateIndex", batteryState.ordinal());
+            Logger.recordOutput("Power/BatteryStateBad", batteryState == BatteryState.BAD);
+        }
         lastPeriod = newPeriod;
     }
 
