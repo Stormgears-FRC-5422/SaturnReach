@@ -1,12 +1,9 @@
-package frc.robot.subsystems.drive.config;/*
- * Copyright (C) Cross The Road Electronics.  All rights reserved.
- * License information can be found in CTRE_LICENSE.txt
- * For support and suggestions contact support@ctr-electronics.com or file
- * an issue tracker at https://github.com/CrossTheRoadElec/Phoenix-Releases
+package frc.robot.subsystems.drive.config;
+/*
+ * This class was shamelessly stolen from the Slot0Configs class from CTRE.
+ * Simplified for the outreach robot
  */
 
-
-// This class was shamelessly stolen from the Slot0Configs class from CTRE. Simplified for the outreach robot
 public class PidConfig {
 
     private boolean isDirty = false;

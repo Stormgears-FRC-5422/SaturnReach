@@ -57,10 +57,8 @@ public class BasicSwerve extends DrivetrainBase {
         }
         moduleGroup.periodic();
 
-//        console("m_chassisSpeeds = " + m_chassisSpeeds, 25);
         if (options.allowRotation.get()) {
             SwerveModuleState[] targetStates = kinematics.toSwerveModuleStates(m_chassisSpeeds);
-//            console("targetStates = " + Arrays.toString(targetStates), 250);
             setModuleStates(targetStates);
         } else {
             driveWithoutRotation();
