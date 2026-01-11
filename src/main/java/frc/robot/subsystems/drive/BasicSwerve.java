@@ -6,11 +6,11 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.LinearVelocity;
+import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Options.DriveOptions;
 import frc.robot.subsystems.drive.config.SwerveModuleGroup;
 import frc.robot.subsystems.drive.config.SwerveModule;
-import com.studica.frc.AHRS;
 
 import static edu.wpi.first.units.Units.*;
 
@@ -20,13 +20,18 @@ public class BasicSwerve extends DrivetrainBase {
     final SwerveModule[] modules;
     final SwerveDriveKinematics kinematics;
     private final DriveOptions options;
-    private final AHRS navx;
+    // TODO: Replace with NavX when Studica releases 2026 version
+    // private final AHRS navx;
+    private final ADIS16470_IMU imu;
 
     public BasicSwerve() {
         super();
 
-        navx = new AHRS(AHRS.NavXComType.kMXP_SPI, AHRS.NavXUpdateRate.k50Hz);
-        navx.zeroYaw();
+        // TODO: Replace with NavX when Studica releases 2026 version
+        // navx = new AHRS(AHRS.NavXComType.kMXP_SPI, AHRS.NavXUpdateRate.k50Hz);
+        // navx.zeroYaw();
+        imu = new ADIS16470_IMU();
+        imu.reset();
 
         options = DriveOptions.create();
 
@@ -39,7 +44,7 @@ public class BasicSwerve extends DrivetrainBase {
 
         SmartDashboard.putData("Swerve Drive", builder -> {
             builder.setSmartDashboardType("SwerveDrive");
-            builder.addDoubleProperty("Robot Angle", () -> -navx.getYaw(), null);
+            builder.addDoubleProperty("Robot Angle", () -> -imu.getAngle(), null);
             for (SwerveModule m : modules) {
                 builder.addDoubleProperty(m.name + " Angle", m::getSteerAngle, null);
                 builder.addDoubleProperty(m.name + " Velocity", m::getDriveVelocity, null);
@@ -87,12 +92,12 @@ public class BasicSwerve extends DrivetrainBase {
 
     @Override
     public Rotation2d getRotation() {
-        return new Rotation2d(Degrees.of(-navx.getAngle()));
+        return new Rotation2d(Degrees.of(-imu.getAngle()));
     }
 
     @Override
     public void resetOrientation() {
-        navx.zeroYaw();
+        imu.reset();
     }
 
     public void stop() {
