@@ -6,7 +6,9 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.LinearVelocity;
+import edu.wpi.first.wpilibj.ADIS16448_IMU;
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
+import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Options.DriveOptions;
 import frc.robot.subsystems.drive.config.SwerveModuleGroup;
@@ -22,7 +24,7 @@ public class BasicSwerve extends DrivetrainBase {
     private final DriveOptions options;
     // TODO: Replace with NavX when Studica releases 2026 version
     // private final AHRS navx;
-    private final ADIS16470_IMU imu;
+    private final ADXRS450_Gyro imu;
 
     public BasicSwerve() {
         super();
@@ -30,7 +32,7 @@ public class BasicSwerve extends DrivetrainBase {
         // TODO: Replace with NavX when Studica releases 2026 version
         // navx = new AHRS(AHRS.NavXComType.kMXP_SPI, AHRS.NavXUpdateRate.k50Hz);
         // navx.zeroYaw();
-        imu = new ADIS16470_IMU();
+        imu = new ADXRS450_Gyro();
         imu.reset();
 
         options = DriveOptions.create();
