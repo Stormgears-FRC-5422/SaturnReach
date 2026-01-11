@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Options.DriveOptions;
 import frc.robot.subsystems.drive.config.SwerveModuleGroup;
 import frc.robot.subsystems.drive.config.SwerveModule;
-import com.studica.frc.AHRS;
+import frc.utils.swerve.NavX2Gyro;
 
 import static edu.wpi.first.units.Units.*;
 
@@ -20,12 +20,14 @@ public class BasicSwerve extends DrivetrainBase {
     final SwerveModule[] modules;
     final SwerveDriveKinematics kinematics;
     private final DriveOptions options;
-    private final AHRS navx;
+    // Lightweight NavX2 workaround until Studica releases 2026 library
+    private final NavX2Gyro navx;
 
     public BasicSwerve() {
         super();
 
-        navx = new AHRS(AHRS.NavXComType.kMXP_SPI, AHRS.NavXUpdateRate.k50Hz);
+        // Using lightweight NavX2 wrapper (USB serial port)
+        navx = new NavX2Gyro();
         navx.zeroYaw();
 
         options = DriveOptions.create();
