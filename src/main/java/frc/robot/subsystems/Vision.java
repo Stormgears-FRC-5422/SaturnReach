@@ -65,40 +65,6 @@ public class Vision extends StormSubsystem {
     }
 
     // ============================================
-    // Getters - Use these in commands
-    // ============================================
-
-    /** @return true if Limelight is connected and sending data */
-    public boolean isConnected() {
-        return connected;
-    }
-
-    /** @return true if a valid target is detected */
-    public boolean hasTarget() {
-        return hasTarget;
-    }
-
-    /** @return Horizontal offset to target in degrees (negative = target is left) */
-    public double getTX() {
-        return tx;
-    }
-
-    /** @return Vertical offset to target in degrees (negative = target is below) */
-    public double getTY() {
-        return ty;
-    }
-
-    /** @return Target area as percentage of image (0-100) */
-    public double getTA() {
-        return ta;
-    }
-
-    /** @return Current pipeline index (0-9) */
-    public int getPipeline() {
-        return currentPipeline;
-    }
-
-    // ============================================
     // Controls
     // ============================================
 
@@ -117,20 +83,5 @@ public class Vision extends StormSubsystem {
      */
     public void setLedMode(LedMode mode) {
         LimelightHelpers.setLedMode(LIMELIGHT_NAME, mode);
-    }
-
-    /** Turn LEDs on */
-    public void ledsOn() {
-        setLedMode(LedMode.ON);
-    }
-
-    /** Turn LEDs off */
-    public void ledsOff() {
-        setLedMode(LedMode.OFF);
-    }
-
-    /** Let pipeline control LEDs */
-    public void ledsAuto() {
-        setLedMode(LedMode.PIPELINE);
     }
 }
