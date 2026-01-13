@@ -14,6 +14,7 @@ import frc.robot.joysticks.CrescendoJoystick;
 import frc.robot.subsystems.BatteryMonitor;
 import frc.robot.subsystems.Lights;
 import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Vision;
 import frc.robot.subsystems.drive.DrivetrainBase;
 import frc.robot.subsystems.drive.DrivetrainFactory;
 import frc.robot.subsystems.drive.IllegalDriveTypeException;
@@ -38,6 +39,8 @@ public class RobotContainer {
     // (no pre-created commands)
     @SuppressWarnings("unused")
     private Lights lights;
+    @SuppressWarnings("unused")
+    private Vision vision;
     private Shooter shooter;
 
     public RobotContainer() {
@@ -63,6 +66,11 @@ public class RobotContainer {
 
             if (Toggles.useLights) {
                 lights = new Lights();
+            }
+
+            if (Toggles.useVision) {
+                console("Create vision");
+                vision = new Vision();
             }
 
             if (Toggles.usePidTuner) {
