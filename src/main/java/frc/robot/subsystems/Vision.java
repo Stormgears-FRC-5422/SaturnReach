@@ -1,9 +1,9 @@
 package frc.robot.subsystems;
 
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.utils.StormSubsystem;
 import frc.utils.vision.LimelightHelpers;
-import frc.utils.vision.LimelightHelpers.LedMode;
 import frc.utils.vision.LimelightHelpers.RawFiducial;
 
 /**
@@ -24,8 +24,8 @@ public class Vision extends StormSubsystem {
 
     public Vision() {
         super();
-        LimelightHelpers.setPipeline(LIMELIGHT_NAME, DEFAULT_PIPELINE);
-        LimelightHelpers.setLedMode(LIMELIGHT_NAME, LedMode.PIPELINE);
+        LimelightHelpers.setPipelineIndex(LIMELIGHT_NAME, DEFAULT_PIPELINE);
+        LimelightHelpers.setLEDMode_PipelineControl(LIMELIGHT_NAME);
         console("Initialized: " + LIMELIGHT_NAME);
     }
 
@@ -33,7 +33,7 @@ public class Vision extends StormSubsystem {
     public void periodic() {
         super.periodic();
         
-        boolean connected = LimelightHelpers.isConnected(LIMELIGHT_NAME);
+        boolean connected = isConnected();
         boolean seesTag = LimelightHelpers.getTV(LIMELIGHT_NAME);
         int tagCount = seesTag ? LimelightHelpers.getRawFiducials(LIMELIGHT_NAME).length : 0;
         int closestTag = getClosestTagId();
@@ -68,5 +68,16 @@ public class Vision extends StormSubsystem {
     /** @return The Limelight name for direct LimelightHelpers calls */
     public String getLimelightName() {
         return LIMELIGHT_NAME;
+    }
+
+    /** 
+     * Checks if Limelight is connected by verifying heartbeat is updating.
+     * @return true if Limelight is connected and responding
+     */
+    private boolean isConnected() {
+        // Check if the Limelight NetworkTable exists and has valid data
+        var table = NetworkTableInstance.getDefault().getTable(LIMELIGHT_NAME);
+        // If hb (heartbeat) is updating, we're connected
+        return table.getEntry("tv").exists();
     }
 }
