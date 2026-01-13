@@ -4,84 +4,69 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.utils.StormSubsystem;
 import frc.utils.vision.LimelightHelpers;
 import frc.utils.vision.LimelightHelpers.LedMode;
+import frc.utils.vision.LimelightHelpers.RawFiducial;
 
 /**
- * Vision subsystem for Limelight camera.
- * Provides target detection data and camera controls.
+ * Vision subsystem for AprilTag detection via Limelight.
+ * Based on StormLimelight from Reefscape, simplified for debugging.
  * 
- * Dashboard outputs:
- * - Vision/Connected: Is the Limelight connected?
- * - Vision/HasTarget: Is a target currently detected?
- * - Vision/TX: Horizontal offset to target (degrees)
- * - Vision/TY: Vertical offset to target (degrees)
- * - Vision/TA: Target area (percentage)
- * - Vision/Pipeline: Current pipeline number
+ * Dashboard outputs (Vision/ prefix):
+ * - Connected: Is Limelight responding?
+ * - SeesTag: Is an AprilTag detected?
+ * - TagCount: Number of AprilTags visible
+ * - ClosestTag: ID of the closest/primary tag
+ * - TX/TY/TA: Target offset and area
  */
 public class Vision extends StormSubsystem {
 
-    // Limelight network name (configured in Limelight web interface)
     private static final String LIMELIGHT_NAME = "limelight-tags";
-    
-    // Default pipeline to use on startup
     private static final int DEFAULT_PIPELINE = 0;
-
-    // Cached values for efficiency
-    private boolean connected = false;
-    private boolean hasTarget = false;
-    private double tx = 0.0;
-    private double ty = 0.0;
-    private double ta = 0.0;
-    private int currentPipeline = 0;
 
     public Vision() {
         super();
-        
-        // Set default pipeline and LED mode on startup
-        setPipeline(DEFAULT_PIPELINE);
-        setLedMode(LedMode.PIPELINE);
-        
-        console("Initialized with Limelight: " + LIMELIGHT_NAME);
+        LimelightHelpers.setPipeline(LIMELIGHT_NAME, DEFAULT_PIPELINE);
+        LimelightHelpers.setLedMode(LIMELIGHT_NAME, LedMode.PIPELINE);
+        console("Initialized: " + LIMELIGHT_NAME);
     }
 
     @Override
     public void periodic() {
         super.periodic();
         
-        // Update cached values from NetworkTables
-        connected = LimelightHelpers.isConnected(LIMELIGHT_NAME);
-        hasTarget = LimelightHelpers.hasTarget(LIMELIGHT_NAME);
-        tx = LimelightHelpers.getTX(LIMELIGHT_NAME);
-        ty = LimelightHelpers.getTY(LIMELIGHT_NAME);
-        ta = LimelightHelpers.getTA(LIMELIGHT_NAME);
-        currentPipeline = LimelightHelpers.getPipeline(LIMELIGHT_NAME);
+        boolean connected = LimelightHelpers.isConnected(LIMELIGHT_NAME);
+        boolean seesTag = LimelightHelpers.getTV(LIMELIGHT_NAME);
+        int tagCount = seesTag ? LimelightHelpers.getRawFiducials(LIMELIGHT_NAME).length : 0;
+        int closestTag = getClosestTagId();
 
-        // Publish to SmartDashboard
+        // Publish to dashboard
         SmartDashboard.putBoolean("Vision/Connected", connected);
-        SmartDashboard.putBoolean("Vision/HasTarget", hasTarget);
-        SmartDashboard.putNumber("Vision/TX", tx);
-        SmartDashboard.putNumber("Vision/TY", ty);
-        SmartDashboard.putNumber("Vision/TA", ta);
-        SmartDashboard.putNumber("Vision/Pipeline", currentPipeline);
+        SmartDashboard.putBoolean("Vision/SeesTag", seesTag);
+        SmartDashboard.putNumber("Vision/TagCount", tagCount);
+        SmartDashboard.putNumber("Vision/ClosestTag", closestTag);
+        SmartDashboard.putNumber("Vision/TX", LimelightHelpers.getTX(LIMELIGHT_NAME));
+        SmartDashboard.putNumber("Vision/TY", LimelightHelpers.getTY(LIMELIGHT_NAME));
+        SmartDashboard.putNumber("Vision/TA", LimelightHelpers.getTA(LIMELIGHT_NAME));
     }
 
-    // ============================================
-    // Controls
-    // ============================================
-
-    /**
-     * Switch to a different pipeline.
-     * @param pipeline Pipeline index (0-9)
-     */
-    public void setPipeline(int pipeline) {
-        LimelightHelpers.setPipeline(LIMELIGHT_NAME, pipeline);
-        console("Pipeline set to " + pipeline);
+    /** @return true if any AprilTag is visible */
+    public boolean seesTag() {
+        return LimelightHelpers.getTV(LIMELIGHT_NAME);
     }
 
-    /**
-     * Set the LED mode.
-     * @param mode LED mode (PIPELINE, OFF, BLINK, ON)
-     */
-    public void setLedMode(LedMode mode) {
-        LimelightHelpers.setLedMode(LIMELIGHT_NAME, mode);
+    /** @return Number of AprilTags currently visible */
+    public int tagCount() {
+        return seesTag() ? LimelightHelpers.getRawFiducials(LIMELIGHT_NAME).length : 0;
+    }
+
+    /** @return ID of the closest/primary AprilTag, or -1 if none */
+    public int getClosestTagId() {
+        if (!seesTag()) return -1;
+        RawFiducial[] fiducials = LimelightHelpers.getRawFiducials(LIMELIGHT_NAME);
+        return fiducials.length > 0 ? fiducials[0].id : -1;
+    }
+
+    /** @return The Limelight name for direct LimelightHelpers calls */
+    public String getLimelightName() {
+        return LIMELIGHT_NAME;
     }
 }
