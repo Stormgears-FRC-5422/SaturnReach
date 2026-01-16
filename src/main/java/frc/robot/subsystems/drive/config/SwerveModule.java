@@ -18,7 +18,9 @@ import edu.wpi.first.units.measure.LinearVelocity;
 import frc.robot.Constants;
 import frc.robot.Options.DriveOptions;
 import org.littletonrobotics.junction.Logger;
-import static edu.wpi.first.units.Units.*;
+
+import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.MetersPerSecond;
 
 public class SwerveModule {
 
@@ -53,16 +55,20 @@ public class SwerveModule {
         name = config.name;
         steerOffset = config.encoderOffset;
 
-        // CANCODER - read only!
+		// CANCoder
         steerCANCoder = new CANcoder(config.encoderID);
 
         // Zero the magnetic offset to ensure we obliterate any prior stored values and read raw values
-        MagnetSensorConfigs magnetConfigs = new MagnetSensorConfigs();
-        magnetConfigs.MagnetOffset = 0.0;
-        steerCANCoder.getConfigurator().apply(magnetConfigs);
+        CANcoderConfiguration canCoderConfig = new CANcoderConfiguration();
+        canCoderConfig.MagnetSensor.MagnetOffset = 0.0;
+        StatusCode status = steerCANCoder.getConfigurator().apply(canCoderConfig, 0.050);
+        if (status.isOK()) {
+            console("Successfully configured CANcoder " + config.encoderID + " magnetic offset");
+        } else {
+            console("Failed to configure CANcoder " + config.encoderID + " magnetic offset: " + status.toString());
+        }
 
-        Angle canOffset = Degrees.of(steerOffset);
-        // /CANCODER
+        Angle canOffset = Degrees.of(steerOffset);       
 
         // MOTORS
         SparkMaxConfig globalConfig = new SparkMaxConfig();
